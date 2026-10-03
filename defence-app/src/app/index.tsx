@@ -43,6 +43,7 @@ export default function HomeScreen() {
   const [isContactsVisible, setIsContactsVisible] = useState(false);
   const [isMapVisible, setIsMapVisible] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isMapInteracting, setIsMapInteracting] = useState(false);
   const [selectedCoords, setSelectedCoords] = useState<{ latitude: number; longitude: number } | null>(null);
 
   // Załaduj zapisane dane
@@ -199,7 +200,12 @@ export default function HomeScreen() {
         }}
       />
 
-      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={styles.scrollContent}
+        scrollEnabled={!isMapInteracting}
+        nestedScrollEnabled={true}
+      >
         {/* DUŻY CENTRALNY PRZYCISK SOS / POMOC */}
         <View style={styles.sosSection}>
           <TouchableOpacity
@@ -289,6 +295,8 @@ export default function HomeScreen() {
                     setSelectedCoords(coords);
                     setIsAddDangerVisible(true);
                   }}
+                  onInteractionStart={() => setIsMapInteracting(true)}
+                  onInteractionEnd={() => setIsMapInteracting(false)}
                   zoom={14}
                   themeMode={isHighContrast ? 'highcontrast' : isDarkMode ? 'dark' : 'light'}
                 />
