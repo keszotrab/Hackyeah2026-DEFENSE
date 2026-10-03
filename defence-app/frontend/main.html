@@ -42,6 +42,61 @@
 
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================
+           TRYB WYSOKIEGO KONTRASTU (A11Y) 
+           ========================================= */
+        body.hc-mode,
+        body.hc-mode * {
+            background-color: #000000 !important;
+            color: #FFFF00 !important;
+            border-color: #FFFF00 !important;
+            box-shadow: none !important;
+        }
+
+        /* Wymuszenie wyraźnych ramek na przyciskach w HC */
+        body.hc-mode button {
+            border: 2px solid #FFFF00 !important;
+        }
+
+        /* Zabezpieczenie koloru czerwonego dla stref alarmowych (SOS) */
+        body.hc-mode .btn-sos, 
+        body.hc-mode .btn-sos *,
+        body.hc-mode .bg-red-600,
+        body.hc-mode .bg-red-600 *,
+        body.hc-mode .bg-red-100 {
+            background-color: #FF0000 !important;
+            color: #FFFFFF !important;
+            border-color: #FFFFFF !important;
+        }
+
+        body.hc-mode .text-red-500,
+        body.hc-mode .text-red-600,
+        body.hc-mode .text-red-700 {
+            color: #FF0000 !important;
+        }
+        
+        /* Kropka powiadomień */
+        body.hc-mode .bg-red-500.rounded-full {
+            background-color: #FF0000 !important;
+            border: 1px solid #000000 !important;
+        }
+
+        /* Dostosowanie suwaków (toggles) dla wysokiego kontrastu */
+        body.hc-mode input[type="checkbox"] + div {
+            border: 2px solid #FFFF00 !important;
+        }
+        body.hc-mode input[type="checkbox"]:checked + div {
+            background-color: #FFFF00 !important;
+        }
+        body.hc-mode input[type="checkbox"] + div::after {
+            background-color: #FFFF00 !important;
+            border: 2px solid #000000 !important;
+        }
+        body.hc-mode input[type="checkbox"]:checked + div::after {
+            background-color: #000000 !important;
+            border-color: #000000 !important;
+        }
     </style>
 </head>
 <body class="bg-gray-200 dark:bg-gray-900 min-h-screen flex items-center justify-center p-4 font-sans text-slate-800 transition-colors duration-300">
@@ -152,7 +207,7 @@
                     <div id="step-1-card" class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-red-500 shadow-sm flex items-center gap-4 transition-all duration-300">
                         <div class="w-8 flex justify-center"><i id="step-1-icon" class="fa-solid fa-spinner animate-spin text-red-500 text-xl"></i></div>
                         <div class="flex-1">
-                            <h3 class="font-bold text-slate-800 dark:text-white text-sm">Powiadamianie Twojej grupy</h3>
+                            <h3 class="font-bold text-slate-800 dark:text-white text-sm">Powiadamianie grupy</h3>
                             <p id="step-1-desc" class="text-xs text-gray-500 dark:text-gray-400 font-medium">Oczekiwanie...</p>
                         </div>
                     </div>
@@ -194,7 +249,7 @@
                     <div class="flex items-center justify-between">
                         <div class="pr-4">
                             <h3 class="font-semibold text-slate-800 dark:text-white text-sm">Tryb ułatwiony</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Zostawia tylko najważniejsze, duże przyciski.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tylko najważniejsze, duże przyciski.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="toggle-simple" class="sr-only peer" onchange="applySimpleMode(this.checked)">
@@ -208,13 +263,28 @@
                     <div class="flex items-center justify-between">
                         <div class="pr-4">
                             <h3 class="font-semibold text-slate-800 dark:text-white text-sm">Tryb ciemny</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mniej męczy oczy w nocy i oszczędza baterię.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mniej męczy oczy, oszczędza baterię.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="toggle-dark" class="sr-only peer" onchange="applyDarkMode(this.checked)">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                         </label>
                     </div>
+
+                    <div class="h-px bg-gray-100 dark:bg-slate-700 w-full"></div>
+
+                    <!-- Przełącznik: Wysoki kontrast -->
+                    <div class="flex items-center justify-between">
+                        <div class="pr-4">
+                            <h3 class="font-semibold text-slate-800 dark:text-white text-sm">Wysoki kontrast</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksymalna czytelność (czarno-żółte).</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                            <input type="checkbox" id="toggle-hc" class="sr-only peer" onchange="applyHighContrast(this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
+                        </label>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -227,7 +297,7 @@
     </div>
 
     <script>
-        // === LOGIKA USTAWIEŃ (TRYBY) ===
+        // === LOGIKA USTAWIEŃ (TRYBY UŁATWIEŃ) ===
         function openSettings() {
             const modal = document.getElementById('settings-modal');
             modal.classList.remove('hidden');
@@ -266,6 +336,14 @@
             }
         }
 
+        function applyHighContrast(isHc) {
+            if (isHc) {
+                document.body.classList.add('hc-mode');
+            } else {
+                document.body.classList.remove('hc-mode');
+            }
+        }
+
 
         // === SYSTEM POWIADOMIEŃ TOAST ===
         let toastTimeout;
@@ -291,6 +369,7 @@
                 toast.classList.add('opacity-0', 'translate-y-[-20px]');
             }, 3000);
         }
+
 
         // === LOGIKA ALARMU (ESKALACJA) ===
         let helpTimeout;
@@ -349,7 +428,7 @@
             const desc = document.getElementById(`step-${step}-desc`);
             desc.innerHTML = descText;
 
-            // Klasy respektują tryb ciemny
+            // Klasy respektują tryb ciemny (który i tak zostanie nadpisany jeśli włączony jest HC)
             if (state === 'active') {
                 card.className = `bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-red-500 shadow-lg flex items-center gap-4 transition-all duration-300 scale-105 my-3`;
                 icon.className = `fa-solid ${step===3 ? 'fa-truck-medical' : 'fa-spinner animate-spin'} text-red-500 text-xl`;
