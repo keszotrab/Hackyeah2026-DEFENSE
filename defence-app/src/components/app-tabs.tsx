@@ -1,5 +1,6 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { Tabs } from 'expo-router';
 import { useColorScheme } from 'react-native';
+import { SymbolView } from 'expo-symbols';
 
 import { Colors } from '@/constants/theme';
 
@@ -8,25 +9,42 @@ export default function AppTabs() {
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
 
   return (
-    <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderTopColor: colors.backgroundElement,
+        },
+        tabBarActiveTintColor: colors.text,
+        tabBarInactiveTintColor: colors.textSecondary,
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Mapa',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'map', android: 'explore', web: 'map' }}
+              tintColor={color}
+              size={22}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'safari', android: 'explore', web: 'link' }}
+              tintColor={color}
+              size={22}
+            />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
