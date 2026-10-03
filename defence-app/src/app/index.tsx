@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import OSMWebView from '../components/map/OSMWebView';
 import AddDangerModal from '../components/add-danger-modal';
 import SOSAlertBanner from '../components/sos-alert-banner';
@@ -33,6 +35,7 @@ export default function HomeScreen() {
 
   const [dangerousLocations, setDangerousLocations] = useState<DangerousLocation[]>([]);
   const [sosAlerts, setSosAlerts] = useState<SOSAlert[]>([]);
+  const [isStatusBarVisible, setIsStatusBarVisible] = useState(false);
 
   // Modale i widoczność
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
@@ -126,8 +129,14 @@ export default function HomeScreen() {
 
   const activeSOSCount = sosAlerts.length;
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetY = Math.max(0, event.nativeEvent.contentOffset.y);
+    setIsStatusBarVisible(offsetY === 0);
+  };
+
   return (
     <SafeAreaView
+      edges={['left', 'right', 'bottom']}
       style={[
         styles.container,
         { backgroundColor: theme.bg },
@@ -137,6 +146,9 @@ export default function HomeScreen() {
       <StatusBar
         barStyle={isDarkMode || isHighContrast ? 'light-content' : 'dark-content'}
         backgroundColor={theme.headerBg}
+        hidden={!isStatusBarVisible}
+        translucent={false}
+        animated
       />
 
       {/* NAGŁÓWEK - CENTRUM BEZPIECZEŃSTWA */}
@@ -201,10 +213,12 @@ export default function HomeScreen() {
       />
 
       <ScrollView
-        style={styles.scrollArea}
+        style={[styles.scrollArea, { backgroundColor: theme.bg }]}
         contentContainerStyle={styles.scrollContent}
         scrollEnabled={!isMapInteracting}
         nestedScrollEnabled={true}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         {/* DUŻY CENTRALNY PRZYCISK SOS / POMOC */}
         <View style={styles.sosSection}>
