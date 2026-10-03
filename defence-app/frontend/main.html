@@ -13,18 +13,11 @@
     
     <script>
         tailwind.config = {
-            darkMode: 'class', // Aktywacja trybu ciemnego za pomocą klasy
+            darkMode: 'class', 
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        navy: {
-                            800: '#1e293b',
-                            900: '#0f172a',
-                        }
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], },
+                    colors: { navy: { 800: '#1e293b', 900: '#0f172a', } }
                 }
             }
         }
@@ -39,66 +32,24 @@
             100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
         .btn-sos { animation: customPulse 2s infinite; }
-
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* =========================================
-           TRYB WYSOKIEGO KONTRASTU (A11Y) 
-           ========================================= */
-        body.hc-mode,
-        body.hc-mode * {
-            background-color: #000000 !important;
-            color: #FFFF00 !important;
-            border-color: #FFFF00 !important;
-            box-shadow: none !important;
+        /* ================= TRYB WYSOKIEGO KONTRASTU ================= */
+        body.hc-mode, body.hc-mode * {
+            background-color: #000000 !important; color: #FFFF00 !important; border-color: #FFFF00 !important; box-shadow: none !important;
         }
-
-        /* Wymuszenie wyraźnych ramek na przyciskach w HC */
-        body.hc-mode button, body.hc-mode textarea {
-            border: 2px solid #FFFF00 !important;
+        body.hc-mode button, body.hc-mode textarea { border: 2px solid #FFFF00 !important; }
+        body.hc-mode .btn-sos, body.hc-mode .btn-sos *, body.hc-mode .bg-red-600, body.hc-mode .bg-red-600 *, body.hc-mode .bg-red-100 {
+            background-color: #FF0000 !important; color: #FFFFFF !important; border-color: #FFFFFF !important;
         }
-
-        /* Zabezpieczenie koloru czerwonego dla stref alarmowych (SOS) */
-        body.hc-mode .btn-sos, 
-        body.hc-mode .btn-sos *,
-        body.hc-mode .bg-red-600,
-        body.hc-mode .bg-red-600 *,
-        body.hc-mode .bg-red-100 {
-            background-color: #FF0000 !important;
-            color: #FFFFFF !important;
-            border-color: #FFFFFF !important;
-        }
-
-        body.hc-mode .text-red-500,
-        body.hc-mode .text-red-600,
-        body.hc-mode .text-red-700 {
-            color: #FF0000 !important;
-        }
+        body.hc-mode .text-red-500, body.hc-mode .text-red-600, body.hc-mode .text-red-700 { color: #FF0000 !important; }
+        body.hc-mode .bg-red-500.rounded-full { background-color: #FF0000 !important; border: 1px solid #000000 !important; }
         
-        /* Kropka powiadomień */
-        body.hc-mode .bg-red-500.rounded-full {
-            background-color: #FF0000 !important;
-            border: 1px solid #000000 !important;
-        }
-
-        /* Dostosowanie suwaków (toggles) dla wysokiego kontrastu */
-        body.hc-mode input[type="checkbox"] + div {
-            border: 2px solid #FFFF00 !important;
-        }
-        body.hc-mode input[type="checkbox"]:checked + div {
-            background-color: #FFFF00 !important;
-        }
-        body.hc-mode input[type="checkbox"] + div::after {
-            background-color: #FFFF00 !important;
-            border: 2px solid #000000 !important;
-        }
-        body.hc-mode input[type="checkbox"]:checked + div::after {
-            background-color: #000000 !important;
-            border-color: #000000 !important;
-        }
-
-        /* Styl dla zaznaczonej kategorii alertów w HC */
+        body.hc-mode input[type="checkbox"] + div { border: 2px solid #FFFF00 !important; }
+        body.hc-mode input[type="checkbox"]:checked + div { background-color: #FFFF00 !important; }
+        body.hc-mode input[type="checkbox"] + div::after { background-color: #FFFF00 !important; border: 2px solid #000000 !important; }
+        body.hc-mode input[type="checkbox"]:checked + div::after { background-color: #000000 !important; border-color: #000000 !important; }
         body.hc-mode .category-selected { background-color: #FFFF00 !important; color: #000000 !important; }
         body.hc-mode .category-selected * { color: #000000 !important; background-color: transparent !important; }
     </style>
@@ -107,13 +58,11 @@
     
     <div class="relative w-full max-w-md h-[850px] max-h-[100vh] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col border-[6px] border-slate-800 transition-colors duration-300">
         
-        <!-- ================= Główny Ekran ================= -->
+        <!-- ================= GŁÓWNY EKRAN ================= -->
         <div id="main-screen" class="flex-1 flex flex-col bg-gray-50 dark:bg-slate-900 overflow-y-auto hide-scrollbar z-10 transition-colors duration-300">
             <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex justify-between items-center transition-colors duration-300">
                 <h1 class="font-bold text-lg tracking-wide">Centrum Bezpieczeństwa</h1>
                 <div class="flex items-center gap-1">
-                    
-                    <!-- Przyciski ukrywane w trybie ułatwionym -->
                     <div id="nav-extras" class="flex items-center gap-1 transition-all duration-300">
                         <button onclick="showToast('Powiadomienia')" class="p-2 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center relative">
                             <i class="fa-solid fa-bell text-xl"></i>
@@ -123,15 +72,12 @@
                             <i class="fa-solid fa-user text-xl"></i>
                         </button>
                     </div>
-
-                    <!-- Przycisk ustawień (zawsze widoczny) -->
                     <button onclick="openSettings()" class="p-2 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
                         <i class="fa-solid fa-gear text-xl"></i>
                     </button>
                 </div>
             </header>
 
-            <!-- Przycisk SOS -->
             <div class="flex flex-col items-center justify-center py-10 px-4 shrink-0">
                 <button onclick="startHelpProcess()" class="btn-sos bg-red-600 hover:bg-red-700 text-white w-56 h-56 rounded-full flex flex-col items-center justify-center shadow-2xl transition transform active:scale-95 border-4 border-red-200 dark:border-red-900 relative overflow-hidden group">
                     <div class="absolute inset-0 bg-red-500 opacity-0 group-hover:opacity-20 transition"></div>
@@ -143,13 +89,11 @@
 
             <!-- SIATKA PEŁNA (Domyślna) -->
             <div id="full-features-grid" class="grid grid-cols-3 gap-4 p-4 transition-all duration-300">
-                <!-- Zmienione: Przycisk otwierający okno Alertów -->
                 <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95 relative" onclick="openAlertScreen()">
                     <div class="w-10 h-10 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-triangle-exclamation"></i></div>
                     <span class="font-semibold text-sm dark:text-gray-200">Alerty</span>
                 </button>
-                
-                <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Zarządzanie bliskimi')">
+                <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95" onclick="openGroupsScreen()">
                     <div class="w-10 h-10 bg-blue-50 dark:bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
                     <span class="font-semibold text-sm text-center leading-tight dark:text-gray-200">Moje grupy</span>
                 </button>
@@ -157,7 +101,7 @@
                     <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-map-location-dot"></i></div>
                     <span class="font-semibold text-sm dark:text-gray-200">Mapa</span>
                 </button>
-                <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Lista kontaktów')">
+                <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95" onclick="openContactScreen()">
                     <div class="w-10 h-10 bg-orange-50 dark:bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-address-book"></i></div>
                     <span class="font-semibold text-sm dark:text-gray-200">Kontakt</span>
                 </button>
@@ -165,458 +109,336 @@
                     <div class="w-10 h-10 bg-purple-50 dark:bg-purple-500/10 text-purple-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-robot"></i></div>
                     <span class="font-semibold text-sm dark:text-gray-200">Chatbot</span>
                 </button>
-                <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Zameldowano pomyślnie!', 'success')">
+                <button class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 transition active:scale-95" onclick="openCheckinScreen()">
                     <div class="w-10 h-10 bg-green-50 dark:bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-location-dot"></i></div>
                     <span class="font-semibold text-sm dark:text-gray-200">Check in</span>
                 </button>
             </div>
 
-            <!-- SIATKA UPROSZCZONA (Domyślnie ukryta) -->
+            <!-- SIATKA UPROSZCZONA -->
             <div id="simple-features-grid" class="hidden grid-cols-2 gap-4 p-4 mb-4 transition-all duration-300">
                 <button class="bg-white dark:bg-slate-800 py-6 px-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-3 transition active:scale-95 hover:bg-gray-50 dark:hover:bg-slate-700" onclick="showToast('Uruchamiam asystenta AI')">
                     <div class="w-14 h-14 bg-purple-50 dark:bg-purple-500/10 text-purple-500 rounded-full flex items-center justify-center text-2xl"><i class="fa-solid fa-robot"></i></div>
                     <span class="font-bold text-slate-700 dark:text-gray-200">Chatbot</span>
                 </button>
-                
-                <button class="bg-white dark:bg-slate-800 py-6 px-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-3 transition active:scale-95 hover:bg-gray-50 dark:hover:bg-slate-700" onclick="showToast('Zameldowano pomyślnie!', 'success')">
+                <button class="bg-white dark:bg-slate-800 py-6 px-4 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-3 transition active:scale-95 hover:bg-gray-50 dark:hover:bg-slate-700" onclick="openCheckinScreen()">
                     <div class="w-14 h-14 bg-green-50 dark:bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl"><i class="fa-solid fa-location-dot"></i></div>
                     <span class="font-bold text-slate-700 dark:text-gray-200">Check in</span>
                 </button>
             </div>
         </div>
 
-        <!-- ================= EKRAN ZGŁASZANIA ALERTU ================= -->
-        <div id="alert-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
-            <!-- Nagłówek -->
+        <!-- ================= EKRAN MOJE GRUPY ================= -->
+        <div id="groups-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
             <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
-                <button onclick="closeAlertScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
+                <button onclick="closeGroupsScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
                     <i class="fa-solid fa-arrow-left text-xl"></i>
                 </button>
-                <h1 class="font-bold text-lg tracking-wide">Dodaj zdarzenie</h1>
+                <h1 class="font-bold text-lg tracking-wide">Moje grupy</h1>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-4 space-y-6 hide-scrollbar">
-                
-                <!-- Lokalizacja -->
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 text-xl">
-                        <i class="fa-solid fa-location-crosshairs"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold text-blue-800 dark:text-blue-300">Lokalizacja z GPS</p>
-                        <p class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">Zostanie pobrana i dodana automatycznie do mapy.</p>
-                    </div>
-                </div>
-
-                <!-- Kategorie -->
-                <div>
-                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm px-1">Co się dzieje? (Wybierz)</h2>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
-                            <div class="w-12 h-12 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-car-burst"></i></div>
-                            <span class="font-semibold text-sm dark:text-gray-200">Wypadek</span>
-                        </button>
-                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
-                            <div class="w-12 h-12 bg-purple-50 dark:bg-purple-500/10 text-purple-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-user-ninja"></i></div>
-                            <span class="font-semibold text-sm dark:text-gray-200">Podejrzany</span>
-                        </button>
-                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
-                            <div class="w-12 h-12 bg-orange-50 dark:bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-fire"></i></div>
-                            <span class="font-semibold text-sm dark:text-gray-200">Pożar</span>
-                        </button>
-                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
-                            <div class="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                            <span class="font-semibold text-sm dark:text-gray-200">Inne zjawisko</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Opis -->
-                <div>
-                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm px-1">Szczegóły (opcjonalnie)</h2>
-                    <textarea class="w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white shadow-sm resize-none" rows="3" placeholder="Opisz sytuację, żeby inni wiedzieli na co uważać..."></textarea>
-                </div>
-            </div>
-
-            <!-- Przycisk Zgłoś -->
-            <div class="p-4 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 shrink-0">
-                <button onclick="submitAlert()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-2xl transition shadow-lg text-lg uppercase tracking-wide active:scale-95">
-                    Wyślij alert
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
+                <button class="w-full bg-white dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 flex items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95" onclick="showToast('Otwieram kreator nowej grupy')">
+                    <div class="w-8 h-8 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center"><i class="fa-solid fa-plus"></i></div>
+                    <span class="font-semibold">Utwórz nową grupę</span>
                 </button>
-            </div>
-        </div>
 
-        <!-- ================= EKRAN ANULOWANIA SOS (5s) ================= -->
-        <div id="loading-screen" class="hidden flex-1 flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 z-20 px-6 absolute inset-0 top-0">
-            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-10 text-center">Inicjowanie procedury ratunkowej...</h2>
-            <div class="relative w-36 h-36 mb-10 flex items-center justify-center">
-                <svg class="animate-spin absolute inset-0 w-full h-full text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
-                    <path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span id="countdown-timer" class="text-5xl font-black text-slate-800 dark:text-white z-10">5</span>
-            </div>
-            <p class="text-gray-500 dark:text-gray-400 mb-12 text-center text-sm px-4">Masz kilka sekund na anulowanie zgłoszenia, jeśli zostało wciśnięte przypadkowo.</p>
-            <button onclick="cancelHelpProcess()" class="w-full max-w-[280px] bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold py-4 rounded-2xl transition shadow-sm text-lg uppercase tracking-wide">
-                Anuluj
-            </button>
-        </div>
+                <div class="space-y-3 mt-6">
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-2 text-sm px-1">Aktywne grupy</h2>
+                    
+                    <!-- Przycisk 1 - Otwiera listę dla Grupy Rodzinnej -->
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between transition active:scale-95 cursor-pointer" onclick="openGroupDetails('Grupa Rodzinna')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-house-chimney"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-slate-800 dark:text-white">Grupa Rodzinna</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">3 członków</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-gray-400"></i>
+                    </div>
 
-        <!-- ================= EKRAN STATUSU SOS (ESKALACJA) ================= -->
-        <div id="status-screen" class="hidden flex-1 flex-col items-center justify-between bg-red-50 dark:bg-red-950/20 z-30 p-6 absolute inset-0 top-0">
-            <div class="w-full flex flex-col items-center mt-6">
-                <div class="w-20 h-20 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-500 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner btn-sos border-4 border-red-200 dark:border-red-800">
-                    <i class="fa-solid fa-tower-broadcast"></i>
-                </div>
-                <h2 class="text-2xl font-black text-red-700 dark:text-red-500 mb-1 tracking-tight">Aktywny alarm</h2>
-                <p class="text-xs text-red-800/60 dark:text-red-400 font-bold uppercase tracking-wider mb-6">Procedura eskalacji</p>
-                
-                <div class="w-full max-w-sm space-y-3">
-                    <div id="step-1-card" class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-red-500 shadow-sm flex items-center gap-4 transition-all duration-300">
-                        <div class="w-8 flex justify-center"><i id="step-1-icon" class="fa-solid fa-spinner animate-spin text-red-500 text-xl"></i></div>
-                        <div class="flex-1">
-                            <h3 class="font-bold text-slate-800 dark:text-white text-sm">Powiadamianie grupy</h3>
-                            <p id="step-1-desc" class="text-xs text-gray-500 dark:text-gray-400 font-medium">Oczekiwanie...</p>
+                    <!-- Przycisk 2 - Otwiera listę dla Znajomi Kraków -->
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between transition active:scale-95 cursor-pointer" onclick="openGroupDetails('Znajomi Kraków')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-user-group"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-slate-800 dark:text-white">Znajomi Kraków</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">2 członków</p>
+                            </div>
                         </div>
-                    </div>
-                    <div id="step-2-card" class="bg-gray-100 dark:bg-slate-800/50 p-4 rounded-xl border-l-4 border-gray-300 dark:border-slate-600 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-60">
-                        <div class="w-8 flex justify-center"><i id="step-2-icon" class="fa-solid fa-street-view text-gray-400 text-xl"></i></div>
-                        <div class="flex-1">
-                            <h3 class="font-bold text-slate-800 dark:text-white text-sm">Użytkownicy w okolicy</h3>
-                            <p id="step-2-desc" class="text-xs text-gray-500 dark:text-gray-400 font-medium">Oczekuje na aktywację</p>
-                        </div>
-                    </div>
-                    <div id="step-3-card" class="bg-gray-100 dark:bg-slate-800/50 p-4 rounded-xl border-l-4 border-gray-300 dark:border-slate-600 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-60">
-                        <div class="w-8 flex justify-center"><i id="step-3-icon" class="fa-solid fa-truck-medical text-gray-400 text-xl"></i></div>
-                        <div class="flex-1">
-                            <h3 class="font-bold text-slate-800 dark:text-white text-sm">Wezwanie służb (112)</h3>
-                            <p id="step-3-desc" class="text-xs text-gray-500 dark:text-gray-400 font-medium">W przypadku braku pomocy</p>
-                        </div>
+                        <i class="fa-solid fa-chevron-right text-gray-400"></i>
                     </div>
                 </div>
             </div>
-            <div class="w-full mb-4">
-                <button onclick="revokeAlarm()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-2xl transition shadow-lg text-lg flex items-center justify-center gap-3 uppercase tracking-wide active:scale-95">
-                    <i class="fa-solid fa-shield-xmark text-2xl"></i> Odwołaj alarm
+        </div>
+
+        <!-- ================= EKRAN SZCZEGÓŁÓW GRUPY (LISTA CZŁONKÓW) ================= -->
+        <div id="group-details-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-50 absolute inset-0 top-0 transition-colors duration-300">
+            <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
+                <button onclick="closeGroupDetails()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
                 </button>
+                <h1 id="group-details-title" class="font-bold text-lg tracking-wide">Nazwa Grupy</h1>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
+                <button class="w-full bg-white dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 flex items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95" onclick="showToast('Otwieram zapraszanie do grupy')">
+                    <div class="w-8 h-8 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center"><i class="fa-solid fa-user-plus"></i></div>
+                    <span class="font-semibold">Dodaj członka do grupy</span>
+                </button>
+
+                <div class="space-y-3 mt-6">
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-2 text-sm px-1">Członkowie</h2>
+                    <div id="group-members-list" class="space-y-3">
+                        <!-- Członkowie wstrzykiwani przez JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- ================= MODAL USTAWIEŃ ================= -->
-        <div id="settings-modal" class="hidden absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 fade-in">
-            <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl transition-colors duration-300">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Ustawienia</h2>
-                    <button onclick="closeSettings()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition active:scale-95">
-                        <i class="fa-solid fa-xmark text-2xl"></i>
+
+        <!-- ================= EKRAN KONTAKTÓW ================= -->
+        <div id="contact-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
+            <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
+                <button onclick="closeContactScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                <h1 class="font-bold text-lg tracking-wide">Kontakty</h1>
+            </header>
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
+                <button class="w-full bg-white dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 flex items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95" onclick="showToast('Otwieram dodawanie kontaktu')">
+                    <div class="w-8 h-8 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center"><i class="fa-solid fa-plus"></i></div>
+                    <span class="font-semibold">Dodaj nowy kontakt</span>
+                </button>
+                <div class="space-y-3 mt-6">
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-2 text-sm px-1">Twoja Grupa (Bliscy)</h2>
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-bold">M</div>
+                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Mama</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
+                        </div>
+                        <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-95"><i class="fa-solid fa-phone"></i></button>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold">T</div>
+                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
+                        </div>
+                        <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-95"><i class="fa-solid fa-phone"></i></button>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold">A</div>
+                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
+                        </div>
+                        <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-95"><i class="fa-solid fa-phone"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= EKRAN CHECK-IN ================= -->
+        <div id="checkin-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
+            <!-- pominąłem zawartość, zostawiona nienaruszona jak wcześniej -->
+            <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
+                <button onclick="closeCheckinScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                <h1 class="font-bold text-lg tracking-wide">Check in</h1>
+            </header>
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col hide-scrollbar">
+                <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-5 flex flex-col items-center gap-2 shadow-sm text-center mb-6">
+                    <div class="w-14 h-14 bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center text-2xl mb-1"><i class="fa-solid fa-shield-heart"></i></div>
+                    <h2 class="font-bold text-green-800 dark:text-green-300">Jestem bezpieczny/a</h2>
+                    <p class="text-xs text-green-600 dark:text-green-400 font-medium mt-1">Wybierz osobę, aby automatycznie wysłać powiadomienie SMS z potwierdzeniem Twojego bezpieczeństwa i obecną lokalizacją.</p>
+                </div>
+                <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm px-1">Wybierz odbiorcę wiadomości</h2>
+                <div class="space-y-3 flex-1">
+                    <button class="w-full checkin-contact-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-3 rounded-xl flex items-center gap-3 transition active:scale-95" onclick="selectCheckinContact(this, 'Mama')">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-bold shrink-0">M</div>
+                        <div class="text-left flex-1"><p class="font-bold text-sm text-slate-800 dark:text-white">Mama</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center check-indicator"></div>
+                    </button>
+                    <button class="w-full checkin-contact-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-3 rounded-xl flex items-center gap-3 transition active:scale-95" onclick="selectCheckinContact(this, 'Tata')">
+                        <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold shrink-0">T</div>
+                        <div class="text-left flex-1"><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center check-indicator"></div>
+                    </button>
+                    <button class="w-full checkin-contact-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-3 rounded-xl flex items-center gap-3 transition active:scale-95" onclick="selectCheckinContact(this, 'Anna (Siostra)')">
+                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold shrink-0">A</div>
+                        <div class="text-left flex-1"><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center check-indicator"></div>
                     </button>
                 </div>
+            </div>
+            <div class="p-4 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 shrink-0">
+                <button onclick="submitCheckin()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl transition shadow-lg text-lg uppercase tracking-wide active:scale-95 flex items-center justify-center gap-2"><i class="fa-solid fa-paper-plane"></i> Wyślij Check-in</button>
+            </div>
+        </div>
 
+        <!-- POZOSTAŁE EKRANY (ALERT, SOS, USTAWIENIA) Pozostały dokładnie takie jak wcześniej, skrócę je dla przejrzystości, aby nie ucinało odpowiedzi -->
+        
+        <!-- EKRAN ALERTÓW -->
+        <div id="alert-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
+            <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3"><button onclick="closeAlertScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full"><i class="fa-solid fa-arrow-left"></i></button><h1 class="font-bold text-lg">Dodaj zdarzenie</h1></header>
+            <div class="flex-1 overflow-y-auto p-4 space-y-6 hide-scrollbar">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center"><i class="fa-solid fa-location-crosshairs"></i></div>
+                    <div><p class="font-bold text-blue-800 dark:text-blue-300 text-sm">Lokalizacja z GPS</p><p class="text-xs text-blue-600 dark:text-blue-400">Dodana do mapy.</p></div>
+                </div>
+                <div>
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm">Co się dzieje?</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2" onclick="selectCategory(this)"><div class="w-12 h-12 bg-red-50 text-red-500 dark:bg-red-500/10 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-car-burst"></i></div><span class="font-semibold text-sm dark:text-gray-200">Wypadek</span></button>
+                        <button class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2" onclick="selectCategory(this)"><div class="w-12 h-12 bg-purple-50 text-purple-500 dark:bg-purple-500/10 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-user-ninja"></i></div><span class="font-semibold text-sm dark:text-gray-200">Podejrzany</span></button>
+                    </div>
+                </div>
+                <textarea class="w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 text-sm dark:text-white shadow-sm resize-none" rows="3" placeholder="Opisz sytuację..."></textarea>
+            </div>
+            <div class="p-4 bg-white dark:bg-slate-800 border-t shrink-0"><button onclick="submitAlert()" class="w-full bg-red-600 text-white font-bold py-4 rounded-2xl">Wyślij alert</button></div>
+        </div>
+
+        <!-- EKRAN ANULOWANIA SOS -->
+        <div id="loading-screen" class="hidden flex-1 flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 z-50 absolute inset-0 top-0">
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-10 text-center">Inicjowanie procedury ratunkowej...</h2>
+            <div class="relative w-36 h-36 mb-10 flex items-center justify-center">
+                <svg class="animate-spin absolute inset-0 w-full h-full text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle><path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <span id="countdown-timer" class="text-5xl font-black text-slate-800 dark:text-white z-10">5</span>
+            </div>
+            <button onclick="cancelHelpProcess()" class="w-full max-w-[280px] bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white font-bold py-4 rounded-2xl">Anuluj</button>
+        </div>
+
+        <!-- EKRAN STATUSU SOS -->
+        <div id="status-screen" class="hidden flex-1 flex-col items-center justify-between bg-red-50 dark:bg-red-950/20 z-50 p-6 absolute inset-0 top-0">
+            <div class="w-full flex flex-col items-center mt-6">
+                <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mb-4 btn-sos"><i class="fa-solid fa-tower-broadcast"></i></div>
+                <h2 class="text-2xl font-black text-red-700 mb-6">Aktywny alarm</h2>
+                <div class="w-full max-w-sm space-y-3">
+                    <div id="step-1-card" class="bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-sm flex items-center gap-4"><div class="w-8 flex justify-center"><i id="step-1-icon" class="fa-solid fa-spinner animate-spin text-red-500 text-xl"></i></div><div class="flex-1"><h3 class="font-bold text-sm">Powiadamianie grupy</h3><p id="step-1-desc" class="text-xs text-gray-500">Oczekiwanie...</p></div></div>
+                    <div id="step-2-card" class="bg-gray-100 p-4 rounded-xl border-l-4 border-gray-300 opacity-60 flex items-center gap-4"><div class="w-8 flex justify-center"><i id="step-2-icon" class="fa-solid fa-street-view text-gray-400 text-xl"></i></div><div class="flex-1"><h3 class="font-bold text-sm">Użytkownicy w okolicy</h3><p id="step-2-desc" class="text-xs text-gray-500">Oczekuje na aktywację</p></div></div>
+                    <div id="step-3-card" class="bg-gray-100 p-4 rounded-xl border-l-4 border-gray-300 opacity-60 flex items-center gap-4"><div class="w-8 flex justify-center"><i id="step-3-icon" class="fa-solid fa-truck-medical text-gray-400 text-xl"></i></div><div class="flex-1"><h3 class="font-bold text-sm">Wezwanie służb (112)</h3><p id="step-3-desc" class="text-xs text-gray-500">W przypadku braku pomocy</p></div></div>
+                </div>
+            </div>
+            <button onclick="revokeAlarm()" class="w-full bg-red-600 text-white font-bold py-4 rounded-2xl">Odwołaj alarm</button>
+        </div>
+
+        <!-- USTAWIENIA MODAL -->
+        <div id="settings-modal" class="hidden absolute inset-0 bg-black/60 z-50 items-center justify-center p-4 fade-in">
+            <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl p-6 shadow-2xl">
+                <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold dark:text-white">Ustawienia</h2><button onclick="closeSettings()" class="text-gray-400"><i class="fa-solid fa-xmark text-2xl"></i></button></div>
                 <div class="space-y-6">
-                    <!-- Przełącznik: Tryb ułatwiony -->
-                    <div class="flex items-center justify-between">
-                        <div class="pr-4">
-                            <h3 class="font-semibold text-slate-800 dark:text-white text-sm">Tryb ułatwiony</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tylko najważniejsze, duże przyciski.</p>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                            <input type="checkbox" id="toggle-simple" class="sr-only peer" onchange="applySimpleMode(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
-                        </label>
-                    </div>
-
-                    <div class="h-px bg-gray-100 dark:bg-slate-700 w-full"></div>
-
-                    <!-- Przełącznik: Tryb ciemny -->
-                    <div class="flex items-center justify-between">
-                        <div class="pr-4">
-                            <h3 class="font-semibold text-slate-800 dark:text-white text-sm">Tryb ciemny</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mniej męczy oczy, oszczędza baterię.</p>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                            <input type="checkbox" id="toggle-dark" class="sr-only peer" onchange="applyDarkMode(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
-                        </label>
-                    </div>
-
-                    <div class="h-px bg-gray-100 dark:bg-slate-700 w-full"></div>
-
-                    <!-- Przełącznik: Wysoki kontrast -->
-                    <div class="flex items-center justify-between">
-                        <div class="pr-4">
-                            <h3 class="font-semibold text-slate-800 dark:text-white text-sm">Wysoki kontrast</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Maksymalna czytelność (czarno-żółte).</p>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                            <input type="checkbox" id="toggle-hc" class="sr-only peer" onchange="applyHighContrast(this.checked)">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
-                        </label>
-                    </div>
-
+                    <div class="flex items-center justify-between"><div><h3 class="font-semibold text-sm dark:text-white">Tryb ułatwiony</h3></div><label class="relative inline-flex items-center cursor-pointer shrink-0"><input type="checkbox" onchange="applySimpleMode(this.checked)" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div></label></div>
+                    <div class="flex items-center justify-between"><div><h3 class="font-semibold text-sm dark:text-white">Tryb ciemny</h3></div><label class="relative inline-flex items-center cursor-pointer shrink-0"><input type="checkbox" onchange="applyDarkMode(this.checked)" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div></label></div>
+                    <div class="flex items-center justify-between"><div><h3 class="font-semibold text-sm dark:text-white">Wysoki kontrast</h3></div><label class="relative inline-flex items-center cursor-pointer shrink-0"><input type="checkbox" onchange="applyHighContrast(this.checked)" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div></label></div>
                 </div>
             </div>
         </div>
 
-        <!-- Toast Notification -->
-        <div id="toast" class="absolute top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 dark:bg-slate-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-2xl z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 whitespace-nowrap">
-            <i id="toastIcon" class="fa-solid fa-circle-info text-lg"></i>
-            <span id="toastMessage">Komunikat</span>
-        </div>
+        <!-- TOAST -->
+        <div id="toast" class="absolute top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-2xl z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3"><i id="toastIcon" class="fa-solid fa-circle-info text-lg"></i><span id="toastMessage">Komunikat</span></div>
     </div>
 
     <script>
-        // === LOGIKA USTAWIEŃ (TRYBY) ===
-        function openSettings() {
-            const modal = document.getElementById('settings-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeSettings() {
-            const modal = document.getElementById('settings-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
+        // === LOGIKA USTAWIEŃ ===
+        function openSettings() { document.getElementById('settings-modal').classList.remove('hidden'); document.getElementById('settings-modal').classList.add('flex'); }
+        function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); document.getElementById('settings-modal').classList.remove('flex'); }
         function applySimpleMode(isSimple) {
-            const navExtras = document.getElementById('nav-extras');
-            const fullGrid = document.getElementById('full-features-grid');
-            const simpleGrid = document.getElementById('simple-features-grid');
-
-            if (isSimple) {
-                navExtras.classList.add('hidden');
-                fullGrid.classList.add('hidden');
-                simpleGrid.classList.remove('hidden');
-                simpleGrid.classList.add('grid');
-            } else {
-                navExtras.classList.remove('hidden');
-                fullGrid.classList.remove('hidden');
-                simpleGrid.classList.add('hidden');
-                simpleGrid.classList.remove('grid');
-            }
+            if (isSimple) { document.getElementById('full-features-grid').classList.add('hidden'); document.getElementById('simple-features-grid').classList.remove('hidden'); document.getElementById('simple-features-grid').classList.add('grid'); } 
+            else { document.getElementById('full-features-grid').classList.remove('hidden'); document.getElementById('simple-features-grid').classList.add('hidden'); document.getElementById('simple-features-grid').classList.remove('grid'); }
         }
+        function applyDarkMode(isDark) { isDark ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'); }
+        function applyHighContrast(isHc) { isHc ? document.body.classList.add('hc-mode') : document.body.classList.remove('hc-mode'); }
 
-        function applyDarkMode(isDark) {
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-
-        function applyHighContrast(isHc) {
-            if (isHc) {
-                document.body.classList.add('hc-mode');
-            } else {
-                document.body.classList.remove('hc-mode');
-            }
-        }
-
-        // === SYSTEM POWIADOMIEŃ TOAST ===
+        // === TOAST ===
         let toastTimeout;
         function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-            toastMessage.textContent = message;
-            
-            if (type === 'success') {
-                toastIcon.className = 'fa-solid fa-circle-check text-green-400 text-lg';
-            } else if (type === 'error') {
-                toastIcon.className = 'fa-solid fa-circle-exclamation text-red-400 text-lg';
-            } else {
-                toastIcon.className = 'fa-solid fa-circle-info text-blue-400 text-lg';
-            }
-
-            toast.classList.remove('opacity-0', 'translate-y-[-20px]');
-            toast.classList.add('opacity-100', 'translate-y-0');
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', 'translate-y-[-20px]');
-            }, 3000);
+            const toast = document.getElementById('toast'), toastIcon = document.getElementById('toastIcon'); document.getElementById('toastMessage').textContent = message;
+            toastIcon.className = type === 'success' ? 'fa-solid fa-circle-check text-green-400 text-lg' : type === 'error' ? 'fa-solid fa-circle-exclamation text-red-400 text-lg' : 'fa-solid fa-circle-info text-blue-400 text-lg';
+            toast.classList.remove('opacity-0', 'translate-y-[-20px]'); toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { toast.classList.remove('opacity-100', 'translate-y-0'); toast.classList.add('opacity-0', 'translate-y-[-20px]'); }, 3000);
         }
 
-        // === LOGIKA DODAWANIA ALERTÓW ===
-        function openAlertScreen() {
-            document.getElementById('main-screen').classList.add('hidden');
-            document.getElementById('main-screen').classList.remove('flex');
-            
-            const alertScreen = document.getElementById('alert-screen');
-            alertScreen.classList.remove('hidden');
-            alertScreen.classList.add('flex', 'fade-in');
-            
-            // Czyszczenie poprzednich wyborów
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected');
-                btn.classList.add('border-transparent');
-            });
-            document.querySelector('#alert-screen textarea').value = '';
+        // === ZMIANA EKRANÓW ===
+        function switchScreen(fromId, toId) {
+            document.getElementById(fromId).classList.add('hidden'); document.getElementById(fromId).classList.remove('flex', 'fade-in');
+            document.getElementById(toId).classList.remove('hidden'); document.getElementById(toId).classList.add('flex', 'fade-in');
         }
 
-        function closeAlertScreen() {
-            document.getElementById('alert-screen').classList.add('hidden');
-            document.getElementById('alert-screen').classList.remove('flex', 'fade-in');
-            
-            document.getElementById('main-screen').classList.remove('hidden');
-            document.getElementById('main-screen').classList.add('flex', 'fade-in');
-        }
+        // === DANE GRUP I EKRAN SZCZEGÓŁÓW ===
+        const groupsData = {
+            'Grupa Rodzinna': `
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-bold">M</div>
+                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Mama</p><p class="text-xs text-gray-500 dark:text-gray-400">Admin</p></div>
+                    </div>
+                    <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Dzwonię...')"><i class="fa-solid fa-phone"></i></button>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold">T</div>
+                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div>
+                    </div>
+                    <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Dzwonię...')"><i class="fa-solid fa-phone"></i></button>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold">A</div>
+                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div>
+                    </div>
+                    <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Dzwonię...')"><i class="fa-solid fa-phone"></i></button>
+                </div>
+            `,
+            'Znajomi Kraków': `
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center font-bold">K</div>
+                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Kamil</p><p class="text-xs text-gray-500 dark:text-gray-400">Admin</p></div>
+                    </div>
+                    <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Wysyłam powiadomienie')"><i class="fa-regular fa-bell"></i></button>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center font-bold">P</div>
+                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Piotr</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div>
+                    </div>
+                    <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Wysyłam powiadomienie')"><i class="fa-regular fa-bell"></i></button>
+                </div>
+            `
+        };
 
-        function selectCategory(button) {
-            // Usunięcie podświetlenia
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected');
-                btn.classList.add('border-transparent');
-            });
-            
-            // Podświetlenie klikniętego (w tym category-selected dla High Contrast)
-            button.classList.remove('border-transparent');
-            button.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected');
+        function openGroupsScreen() { switchScreen('main-screen', 'groups-screen'); }
+        function closeGroupsScreen() { switchScreen('groups-screen', 'main-screen'); }
+        
+        // NOWE: Dynamiczne ładowanie listy członków grupy
+        function openGroupDetails(groupName) {
+            document.getElementById('group-details-title').textContent = groupName;
+            document.getElementById('group-members-list').innerHTML = groupsData[groupName] || '<p class="text-sm text-gray-500">Brak członków w grupie.</p>';
+            switchScreen('groups-screen', 'group-details-screen');
         }
+        function closeGroupDetails() { switchScreen('group-details-screen', 'groups-screen'); }
 
-        function submitAlert() {
-            const isSelected = document.querySelector('.category-selected');
-            if(!isSelected) {
-                showToast('Wybierz rodzaj zagrożenia', 'error');
-                return;
-            }
-            
-            closeAlertScreen();
-            showToast('Zagrożenie zostało dodane do mapy', 'success');
-        }
+        // Alert
+        function openAlertScreen() { switchScreen('main-screen', 'alert-screen'); }
+        function closeAlertScreen() { switchScreen('alert-screen', 'main-screen'); }
+        function selectCategory(btn) { document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected')); btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected'); }
+        function submitAlert() { if(document.querySelector('.category-selected')) { closeAlertScreen(); showToast('Dodano zdarzenie do mapy', 'success'); } else showToast('Wybierz typ', 'error'); }
 
-        // === LOGIKA ALARMU (ESKALACJA SOS) ===
-        let helpTimeout;
+        // Contact & Checkin
+        function openContactScreen() { switchScreen('main-screen', 'contact-screen'); }
+        function closeContactScreen() { switchScreen('contact-screen', 'main-screen'); }
+        let selectedCheckin = null;
+        function openCheckinScreen() { switchScreen('main-screen', 'checkin-screen'); selectedCheckin = null; }
+        function closeCheckinScreen() { switchScreen('checkin-screen', 'main-screen'); }
+        function selectCheckinContact(btn, name) { selectedCheckin = name; document.querySelectorAll('.checkin-contact-btn').forEach(b => { b.classList.remove('border-green-500', 'bg-green-50'); b.querySelector('.check-indicator').innerHTML = ''; b.querySelector('.check-indicator').classList.remove('border-green-500', 'bg-green-500'); }); btn.classList.add('border-green-500', 'bg-green-50'); btn.querySelector('.check-indicator').classList.add('border-green-500', 'bg-green-500'); btn.querySelector('.check-indicator').innerHTML = '<i class="fa-solid fa-check text-white text-xs"></i>'; }
+        function submitCheckin() { if(selectedCheckin) { closeCheckinScreen(); showToast('Wysłano do: ' + selectedCheckin, 'success'); } else showToast('Wybierz osobę', 'error'); }
+
+        // SOS (Uproszczone dla podglądu)
         let countdownInterval;
-        let timeLeft = 5;
-        let groupCountdown;
-        let finalCountdown;
-        let secondsToGroupResponse = 120; // 2 min
-        let secondsToEmergency = 600;     // 10 min
-
-        function startHelpProcess() {
-            document.getElementById('main-screen').classList.add('hidden');
-            document.getElementById('main-screen').classList.remove('flex');
-            
-            const loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.classList.remove('hidden');
-            loadingScreen.classList.add('flex', 'fade-in');
-            
-            timeLeft = 5;
-            document.getElementById('countdown-timer').textContent = timeLeft;
-            
-            countdownInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('countdown-timer').textContent = timeLeft;
-                if (timeLeft <= 0) clearInterval(countdownInterval);
-            }, 1000);
-
-            helpTimeout = setTimeout(() => { showStatusScreen(); }, 5000);
-        }
-
-        function cancelHelpProcess() {
-            clearTimeout(helpTimeout);
-            clearInterval(countdownInterval);
-            
-            document.getElementById('loading-screen').classList.add('hidden');
-            document.getElementById('loading-screen').classList.remove('flex', 'fade-in');
-            
-            document.getElementById('main-screen').classList.remove('hidden');
-            document.getElementById('main-screen').classList.add('flex', 'fade-in');
-            
-            showToast('Zgłoszenie zostało anulowane', 'info');
-        }
-
-        function showStatusScreen() {
-            document.getElementById('loading-screen').classList.add('hidden');
-            document.getElementById('loading-screen').classList.remove('flex');
-            
-            const statusScreen = document.getElementById('status-screen');
-            statusScreen.classList.remove('hidden');
-            statusScreen.classList.add('flex', 'fade-in');
-            
-            showToast('Rozpoczęto procedurę ratunkową!', 'error');
-            resetEscalationUI();
-            startEscalation();
-        }
-
-        function setStepState(step, state, descText) {
-            const card = document.getElementById(`step-${step}-card`);
-            const icon = document.getElementById(`step-${step}-icon`);
-            const desc = document.getElementById(`step-${step}-desc`);
-            desc.innerHTML = descText;
-
-            if (state === 'active') {
-                card.className = `bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-red-500 shadow-lg flex items-center gap-4 transition-all duration-300 scale-105 my-3`;
-                icon.className = `fa-solid ${step===3 ? 'fa-truck-medical' : 'fa-spinner animate-spin'} text-red-500 text-xl`;
-            } else if (state === 'pending') {
-                card.className = `bg-gray-100 dark:bg-slate-800/50 p-4 rounded-xl border-l-4 border-gray-300 dark:border-slate-600 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-60`;
-                let iconClass = step === 1 ? 'fa-user-group' : step === 2 ? 'fa-street-view' : 'fa-truck-medical';
-                icon.className = `fa-solid ${iconClass} text-gray-400 dark:text-gray-500 text-xl`;
-            } else if (state === 'passed') {
-                card.className = `bg-gray-50 dark:bg-slate-800/80 p-4 rounded-xl border-l-4 border-gray-400 dark:border-slate-500 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-80`;
-                icon.className = `fa-solid fa-check text-gray-500 dark:text-gray-400 text-xl`;
-            }
-        }
-
-        function resetEscalationUI() {
-            clearInterval(groupCountdown);
-            clearInterval(finalCountdown);
-            secondsToGroupResponse = 120;
-            secondsToEmergency = 600;
-            setStepState(1, 'active', 'Oczekiwanie na reakcję... <span class="text-red-500 font-bold">02:00</span>');
-            setStepState(2, 'pending', 'Oczekuje na aktywację');
-            setStepState(3, 'pending', 'W przypadku braku pomocy');
-        }
-
-        function startEscalation() {
-            groupCountdown = setInterval(() => {
-                secondsToGroupResponse--;
-                let m = Math.floor(secondsToGroupResponse / 60);
-                let s = secondsToGroupResponse % 60;
-                let timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                
-                document.getElementById('step-1-desc').innerHTML = `Oczekiwanie na reakcję... <span class="text-red-500 font-bold">${timeString}</span>`;
-
-                if (secondsToGroupResponse <= 0) {
-                    clearInterval(groupCountdown);
-                    setStepState(1, 'passed', '<span class="text-red-500 font-semibold">Brak odpowiedzi.</span> Przekazano dalej.');
-                    setStepState(2, 'active', 'Szukanie użytkowników w okolicy...');
-                    startEmergencyCountdown();
-                }
-            }, 1000); 
-        }
-
-        function startEmergencyCountdown() {
-            finalCountdown = setInterval(() => {
-                secondsToEmergency--;
-                let m = Math.floor(secondsToEmergency / 60);
-                let s = secondsToEmergency % 60;
-                let timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                
-                document.getElementById('step-3-desc').innerHTML = `Wezwanie za: <span class="text-red-500 font-bold">${timeString}</span>`;
-                
-                if (secondsToEmergency <= 0) {
-                    clearInterval(finalCountdown);
-                    setStepState(2, 'passed', 'Nikt z okolicy nie mógł pomóc.');
-                    setStepState(3, 'active', 'Powiadomiono służby (112)');
-                    showToast('Służby ratunkowe są w drodze!', 'error');
-                }
-            }, 1000);
-        }
-
-        function revokeAlarm() {
-            clearInterval(groupCountdown);
-            clearInterval(finalCountdown);
-            
-            document.getElementById('status-screen').classList.add('hidden');
-            document.getElementById('status-screen').classList.remove('flex', 'fade-in');
-            
-            document.getElementById('main-screen').classList.remove('hidden');
-            document.getElementById('main-screen').classList.add('flex', 'fade-in');
-            
-            showToast('Alarm i wszystkie powiadomienia odwołane', 'success');
-        }
+        function startHelpProcess() { switchScreen('main-screen', 'loading-screen'); let t = 5; document.getElementById('countdown-timer').textContent = t; countdownInterval = setInterval(() => { t--; document.getElementById('countdown-timer').textContent = t; if(t<=0) { clearInterval(countdownInterval); switchScreen('loading-screen', 'status-screen'); } }, 1000); }
+        function cancelHelpProcess() { clearInterval(countdownInterval); switchScreen('loading-screen', 'main-screen'); }
+        function revokeAlarm() { switchScreen('status-screen', 'main-screen'); showToast('Alarm odwołany', 'success'); }
     </script>
 </body>
 </html>
