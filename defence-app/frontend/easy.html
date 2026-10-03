@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bezpieczny Profil - Aplikacja Bezpieczeństwa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes customPulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        .btn-sos { animation: customPulse 2s infinite; }
+
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-200 min-h-screen flex items-center justify-center p-4 font-sans text-slate-800">
+    
+    <div class="relative w-full max-w-md h-[850px] max-h-[100vh] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col border-[6px] border-slate-800">
+        
+        <!-- Główny Ekran -->
+        <!-- Główny Ekran (Wersja Uproszczona) -->
+<div id="main-screen" class="flex-1 flex flex-col bg-gray-50 overflow-y-auto hide-scrollbar z-10">
+    
+    <!-- Nagłówek tylko z Ustawieniami -->
+    <header class="bg-navy-900 text-white p-4 shadow-md shrink-0 flex justify-between items-center">
+        <h1 class="font-bold text-lg tracking-wide">Centrum Bezpieczeństwa</h1>
+        <button onclick="showToast('Ustawienia aplikacji')" class="p-2 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
+            <i class="fa-solid fa-gear text-xl"></i>
+        </button>
+    </header>
+
+    <!-- Centralny przycisk POMOC -->
+    <div class="flex-1 flex flex-col items-center justify-center py-10 px-4 shrink-0">
+        <button onclick="startHelpProcess()" class="btn-sos bg-red-600 hover:bg-red-700 text-white w-64 h-64 rounded-full flex flex-col items-center justify-center shadow-2xl transition transform active:scale-95 border-4 border-red-200 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-red-500 opacity-0 group-hover:opacity-20 transition"></div>
+            <i class="fa-solid fa-hand-holding-medical text-7xl mb-4"></i>
+            <span class="font-bold text-3xl uppercase tracking-wider text-center leading-tight">Pomoc</span>
+        </button>
+        <p class="text-sm text-gray-500 mt-8 text-center font-medium">Naciśnij w nagłej sytuacji</p>
+    </div>
+
+    <!-- Siatka 2 funkcji na dole -->
+    <div class="grid grid-cols-2 gap-4 p-4 mb-4">
+        <!-- Przycisk: Chatbot -->
+        <button class="bg-white py-6 px-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-3 transition active:scale-95 hover:bg-gray-50" onclick="showToast('Uruchamiam asystenta AI')">
+            <div class="w-14 h-14 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center text-2xl"><i class="fa-solid fa-robot"></i></div>
+            <span class="font-bold text-slate-700">Chatbot</span>
+        </button>
+        
+        <!-- Przycisk: Check in -->
+        <button class="bg-white py-6 px-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-3 transition active:scale-95 hover:bg-gray-50" onclick="showToast('Zameldowano pomyślnie!', 'success')">
+            <div class="w-14 h-14 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-2xl"><i class="fa-solid fa-location-dot"></i></div>
+            <span class="font-bold text-slate-700">Check in</span>
+        </button>
+    </div>
+</div>
+
+        <!-- Ekran anulowania (5 sekund) -->
+        <div id="loading-screen" class="hidden flex-1 flex-col items-center justify-center bg-gray-50 z-20 px-6 absolute inset-0 top-0">
+            <h2 class="text-2xl font-bold text-slate-800 mb-10 text-center">Inicjowanie procedury ratunkowej...</h2>
+            
+            <div class="relative w-36 h-36 mb-10 flex items-center justify-center">
+                <svg class="animate-spin absolute inset-0 w-full h-full text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                    <path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span id="countdown-timer" class="text-5xl font-black text-slate-800 z-10">5</span>
+            </div>
+            
+            <p class="text-gray-500 mb-12 text-center text-sm px-4">Masz kilka sekund na anulowanie zgłoszenia, jeśli zostało wciśnięte przypadkowo.</p>
+            
+            <button onclick="cancelHelpProcess()" class="w-full max-w-[280px] bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-4 rounded-2xl transition shadow-sm text-lg uppercase tracking-wide">
+                Anuluj
+            </button>
+        </div>
+
+        <!-- Nowy ekran statusu (Sekwencja 3-etapowa) -->
+        <div id="status-screen" class="hidden flex-1 flex-col items-center justify-between bg-red-50 z-30 p-6 absolute inset-0 top-0">
+            <div class="w-full flex flex-col items-center mt-6">
+                <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner btn-sos border-4 border-red-200">
+                    <i class="fa-solid fa-tower-broadcast"></i>
+                </div>
+                <h2 class="text-2xl font-black text-red-700 mb-1 tracking-tight">Aktywny alarm</h2>
+                <p class="text-xs text-red-800/60 font-bold uppercase tracking-wider mb-6">Procedura eskalacji</p>
+                
+                <div class="w-full max-w-sm space-y-3">
+                    <!-- Krok 1 -->
+                    <div id="step-1-card" class="bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-sm flex items-center gap-4 transition-all duration-300">
+                        <div class="w-8 flex justify-center">
+                            <i id="step-1-icon" class="fa-solid fa-spinner animate-spin text-red-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-slate-800 text-sm">Powiadamianie Twojej grupy</h3>
+                            <p id="step-1-desc" class="text-xs text-gray-500 font-medium">Oczekiwanie na reakcję...</p>
+                        </div>
+                    </div>
+
+                    <!-- Krok 2 -->
+                    <div id="step-2-card" class="bg-gray-100 p-4 rounded-xl border-l-4 border-gray-300 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-60">
+                        <div class="w-8 flex justify-center">
+                            <i id="step-2-icon" class="fa-solid fa-street-view text-gray-400 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-slate-800 text-sm">Użytkownicy w okolicy</h3>
+                            <p id="step-2-desc" class="text-xs text-gray-500 font-medium">Oczekuje na aktywację</p>
+                        </div>
+                    </div>
+
+                    <!-- Krok 3 -->
+                    <div id="step-3-card" class="bg-gray-100 p-4 rounded-xl border-l-4 border-gray-300 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-60">
+                        <div class="w-8 flex justify-center">
+                            <i id="step-3-icon" class="fa-solid fa-truck-medical text-gray-400 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-slate-800 text-sm">Wezwanie służb (112)</h3>
+                            <p id="step-3-desc" class="text-xs text-gray-500 font-medium">W przypadku braku pomocy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="w-full mb-4">
+                <button onclick="revokeAlarm()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-2xl transition shadow-lg text-lg flex items-center justify-center gap-3 uppercase tracking-wide active:scale-95">
+                    <i class="fa-solid fa-shield-xmark text-2xl"></i> Odwołaj alarm
+                </button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="absolute top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-2xl z-[100] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 whitespace-nowrap">
+            <i id="toastIcon" class="fa-solid fa-circle-info text-lg"></i>
+            <span id="toastMessage">Komunikat</span>
+        </div>
+
+    </div>
+
+    <script>
+    // System Toast
+    let toastTimeout;
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+
+        toastMessage.textContent = message;
+        
+        if (type === 'success') {
+            toastIcon.className = 'fa-solid fa-circle-check text-green-400 text-lg';
+        } else if (type === 'error') {
+            toastIcon.className = 'fa-solid fa-circle-exclamation text-red-400 text-lg';
+        } else {
+            toastIcon.className = 'fa-solid fa-circle-info text-blue-400 text-lg';
+        }
+
+        toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+        toast.classList.add('opacity-100', 'translate-y-0');
+
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('opacity-0', 'translate-y-[-20px]');
+        }, 3000);
+    }
+
+    // Zmienne globalne procesów
+    let helpTimeout;
+    let countdownInterval;
+    let timeLeft = 5;
+
+    // Zmienne do eskalacji
+    let groupCountdown;
+    let finalCountdown;
+    let secondsToGroupResponse = 120; // 2 minuty = 120 sekund
+    let secondsToEmergency = 600;     // 10 minut = 600 sekund
+
+    // 1. Inicjalizacja przyciskiem SOS
+    function startHelpProcess() {
+        document.getElementById('main-screen').classList.add('hidden');
+        document.getElementById('main-screen').classList.remove('flex');
+        
+        const loadingScreen = document.getElementById('loading-screen');
+        loadingScreen.classList.remove('hidden');
+        loadingScreen.classList.add('flex', 'fade-in');
+        
+        timeLeft = 5;
+        document.getElementById('countdown-timer').textContent = timeLeft;
+        
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('countdown-timer').textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+
+        helpTimeout = setTimeout(() => {
+            showStatusScreen();
+        }, 5000);
+    }
+
+    // 2. Anulowanie w ciągu początkowych 5 sekund
+    function cancelHelpProcess() {
+        clearTimeout(helpTimeout);
+        clearInterval(countdownInterval);
+        
+        document.getElementById('loading-screen').classList.add('hidden');
+        document.getElementById('loading-screen').classList.remove('flex', 'fade-in');
+        
+        document.getElementById('main-screen').classList.remove('hidden');
+        document.getElementById('main-screen').classList.add('flex', 'fade-in');
+        
+        showToast('Zgłoszenie zostało anulowane', 'info');
+    }
+
+    // 3. Pokazanie ekranu eskalacji
+    function showStatusScreen() {
+        document.getElementById('loading-screen').classList.add('hidden');
+        document.getElementById('loading-screen').classList.remove('flex');
+        
+        const statusScreen = document.getElementById('status-screen');
+        statusScreen.classList.remove('hidden');
+        statusScreen.classList.add('flex', 'fade-in');
+        
+        showToast('Rozpoczęto procedurę ratunkową!', 'error');
+        
+        resetEscalationUI();
+        startEscalation();
+    }
+
+    // Funkcja pomocnicza zmieniająca wygląd poszczególnych kroków
+    function setStepState(step, state, descText) {
+        const card = document.getElementById(`step-${step}-card`);
+        const icon = document.getElementById(`step-${step}-icon`);
+        const desc = document.getElementById(`step-${step}-desc`);
+        
+        desc.innerHTML = descText;
+
+        if (state === 'active') {
+            card.className = `bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-lg flex items-center gap-4 transition-all duration-300 scale-105 my-3`;
+            icon.className = `fa-solid ${step===3 ? 'fa-truck-medical' : 'fa-spinner animate-spin'} text-red-500 text-xl`;
+        } else if (state === 'pending') {
+            card.className = `bg-gray-100 p-4 rounded-xl border-l-4 border-gray-300 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-60`;
+            let iconClass = step === 1 ? 'fa-user-group' : step === 2 ? 'fa-street-view' : 'fa-truck-medical';
+            icon.className = `fa-solid ${iconClass} text-gray-400 text-xl`;
+        } else if (state === 'passed') {
+            card.className = `bg-gray-50 p-4 rounded-xl border-l-4 border-gray-400 shadow-sm flex items-center gap-4 transition-all duration-300 opacity-80`;
+            icon.className = `fa-solid fa-check text-gray-500 text-xl`;
+        }
+    }
+
+    function resetEscalationUI() {
+        clearInterval(groupCountdown);
+        clearInterval(finalCountdown);
+        secondsToGroupResponse = 120; // Reset do 2 minut
+        secondsToEmergency = 600;     // Reset do 10 minut
+
+        setStepState(1, 'active', 'Oczekiwanie na reakcję... <span class="text-red-500 font-bold">02:00</span>');
+        setStepState(2, 'pending', 'Oczekuje na aktywację');
+        setStepState(3, 'pending', 'W przypadku braku pomocy');
+    }
+
+    // 4. Logika właściwej eskalacji
+    function startEscalation() {
+        // KROK 1: Odliczanie 2 minut dla grupy
+        groupCountdown = setInterval(() => {
+            secondsToGroupResponse--;
+            
+            // Formatowanie czasu (MM:SS)
+            let m = Math.floor(secondsToGroupResponse / 60);
+            let s = secondsToGroupResponse % 60;
+            let timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            
+            document.getElementById('step-1-desc').innerHTML = `Oczekiwanie na reakcję... <span class="text-red-500 font-bold">${timeString}</span>`;
+
+            // Gdy miną 2 minuty i nikt z grupy nie zareaguje
+            if (secondsToGroupResponse <= 0) {
+                clearInterval(groupCountdown);
+                
+                // Przejście z kroku 1 na krok 2
+                setStepState(1, 'passed', '<span class="text-red-500 font-semibold">Brak odpowiedzi.</span> Przekazano dalej.');
+                setStepState(2, 'active', 'Szukanie użytkowników w okolicy...');
+                
+                // Start KROKU 2: odliczanie 10 minut do wezwania służb
+                startEmergencyCountdown();
+            }
+        }, 1000); 
+    }
+
+    function startEmergencyCountdown() {
+        finalCountdown = setInterval(() => {
+            secondsToEmergency--;
+            
+            // Formatowanie czasu (MM:SS)
+            let m = Math.floor(secondsToEmergency / 60);
+            let s = secondsToEmergency % 60;
+            let timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            
+            document.getElementById('step-3-desc').innerHTML = `Wezwanie za: <span class="text-red-500 font-bold">${timeString}</span>`;
+            
+            // Gdy minie 10 minut i nikt z okolicy nie zareaguje
+            if (secondsToEmergency <= 0) {
+                clearInterval(finalCountdown);
+                setStepState(2, 'passed', 'Nikt z okolicy nie mógł pomóc.');
+                setStepState(3, 'active', 'Powiadomiono służby (112)');
+                showToast('Służby ratunkowe są w drodze!', 'error');
+            }
+        }, 1000);
+    }
+
+    // 5. Odwołanie alarmu w trakcie procedury eskalacji
+    function revokeAlarm() {
+        clearInterval(groupCountdown);
+        clearInterval(finalCountdown);
+        
+        document.getElementById('status-screen').classList.add('hidden');
+        document.getElementById('status-screen').classList.remove('flex', 'fade-in');
+        
+        document.getElementById('main-screen').classList.remove('hidden');
+        document.getElementById('main-screen').classList.add('flex', 'fade-in');
+        
+        showToast('Alarm i wszystkie powiadomienia odwołane', 'success');
+    }
+</script>
+</body>
+</html>
