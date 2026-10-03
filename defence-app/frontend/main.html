@@ -50,6 +50,7 @@
         body.hc-mode input[type="checkbox"]:checked + div { background-color: #FFFF00 !important; }
         body.hc-mode input[type="checkbox"] + div::after { background-color: #FFFF00 !important; border: 2px solid #000000 !important; }
         body.hc-mode input[type="checkbox"]:checked + div::after { background-color: #000000 !important; border-color: #000000 !important; }
+
         body.hc-mode .category-selected { background-color: #FFFF00 !important; color: #000000 !important; }
         body.hc-mode .category-selected * { color: #000000 !important; background-color: transparent !important; }
     </style>
@@ -128,7 +129,74 @@
             </div>
         </div>
 
-        <!-- ================= EKRAN MOJE GRUPY ================= -->
+
+        <!-- ================= EKRAN ZGŁASZANIA ALERTU (ZMODYFIKOWANY) ================= -->
+        <div id="alert-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
+            <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
+                <button onclick="closeAlertScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                <h1 class="font-bold text-lg tracking-wide">Dodaj zdarzenie</h1>
+            </header>
+            
+            <div class="flex-1 overflow-y-auto p-4 space-y-8 hide-scrollbar">
+                
+                <!-- KROK 1: Lokalizacja (Wymaga potwierdzenia) -->
+                <div>
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm px-1">Krok 1: Weryfikacja lokalizacji GPS</h2>
+                    
+                    <div id="location-box" class="bg-white dark:bg-slate-800 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-2xl p-4 flex flex-col gap-4 shadow-sm transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div id="location-icon" class="w-12 h-12 bg-blue-50 dark:bg-blue-900/40 text-blue-500 rounded-full flex items-center justify-center shrink-0 text-xl">
+                                <i class="fa-solid fa-location-crosshairs animate-pulse"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Wykryto z dużą dokładnością:</p>
+                                <p class="text-sm font-bold text-slate-800 dark:text-white truncate">Małopolskie, Kraków</p>
+                            </div>
+                        </div>
+                        <button id="confirm-location-btn" type="button" class="w-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-semibold py-3 rounded-xl border border-blue-200 dark:border-blue-800 transition active:scale-95 flex items-center justify-center gap-2" onclick="confirmAlertLocation()">
+                            Potwierdź moją lokalizację
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KROK 2: Kategorie -->
+                <div>
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm px-1">Krok 2: Co się dzieje? (Wybierz)</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
+                            <div class="w-12 h-12 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-car-burst"></i></div>
+                            <span class="font-semibold text-sm dark:text-gray-200">Wypadek</span>
+                        </button>
+                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
+                            <div class="w-12 h-12 bg-purple-50 dark:bg-purple-500/10 text-purple-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-user-ninja"></i></div>
+                            <span class="font-semibold text-sm dark:text-gray-200">Podejrzany</span>
+                        </button>
+                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
+                            <div class="w-12 h-12 bg-orange-50 dark:bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-fire"></i></div>
+                            <span class="font-semibold text-sm dark:text-gray-200">Pożar</span>
+                        </button>
+                        <button type="button" class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2 transition active:scale-95" onclick="selectCategory(this)">
+                            <div class="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <span class="font-semibold text-sm dark:text-gray-200">Inne zjawisko</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Opcjonalny Opis -->
+                <div>
+                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm px-1">Szczegóły (opcjonalnie)</h2>
+                    <textarea class="w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white shadow-sm resize-none" rows="3" placeholder="Opisz sytuację..."></textarea>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 shrink-0">
+                <button onclick="submitAlert()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-2xl transition shadow-lg text-lg uppercase tracking-wide active:scale-95">Wyślij alert do bazy</button>
+            </div>
+        </div>
+
+        
+        <!-- ================= POZOSTAŁE EKRANY (Grypy, Kontakty, Check-in, SOS) Zmodyfikowane i zachowane ================= -->
+        <!-- Grupy -->
         <div id="groups-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
             <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
                 <button onclick="closeGroupsScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
@@ -136,40 +204,24 @@
                 </button>
                 <h1 class="font-bold text-lg tracking-wide">Moje grupy</h1>
             </header>
-
             <div class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
                 <button class="w-full bg-white dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 flex items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95" onclick="showToast('Otwieram kreator nowej grupy')">
                     <div class="w-8 h-8 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center"><i class="fa-solid fa-plus"></i></div>
                     <span class="font-semibold">Utwórz nową grupę</span>
                 </button>
-
                 <div class="space-y-3 mt-6">
                     <h2 class="font-bold text-slate-800 dark:text-white mb-2 text-sm px-1">Aktywne grupy</h2>
-                    
-                    <!-- Przycisk 1 - Otwiera listę dla Grupy Rodzinnej -->
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between transition active:scale-95 cursor-pointer" onclick="openGroupDetails('Grupa Rodzinna')">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-house-chimney"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm text-slate-800 dark:text-white">Grupa Rodzinna</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">3 członków</p>
-                            </div>
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-house-chimney"></i></div>
+                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Grupa Rodzinna</p><p class="text-xs text-gray-500 dark:text-gray-400">3 członków</p></div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-gray-400"></i>
                     </div>
-
-                    <!-- Przycisk 2 - Otwiera listę dla Znajomi Kraków -->
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between transition active:scale-95 cursor-pointer" onclick="openGroupDetails('Znajomi Kraków')">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-user-group"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm text-slate-800 dark:text-white">Znajomi Kraków</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">2 członków</p>
-                            </div>
+                            <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-user-group"></i></div>
+                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Znajomi Kraków</p><p class="text-xs text-gray-500 dark:text-gray-400">2 członków</p></div>
                         </div>
                         <i class="fa-solid fa-chevron-right text-gray-400"></i>
                     </div>
@@ -177,32 +229,25 @@
             </div>
         </div>
 
-        <!-- ================= EKRAN SZCZEGÓŁÓW GRUPY (LISTA CZŁONKÓW) ================= -->
+        <!-- Ekran Szczegółów Grupy -->
         <div id="group-details-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-50 absolute inset-0 top-0 transition-colors duration-300">
             <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
-                <button onclick="closeGroupDetails()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
-                    <i class="fa-solid fa-arrow-left text-xl"></i>
-                </button>
+                <button onclick="closeGroupDetails()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
                 <h1 id="group-details-title" class="font-bold text-lg tracking-wide">Nazwa Grupy</h1>
             </header>
-
             <div class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
                 <button class="w-full bg-white dark:bg-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 flex items-center justify-center gap-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95" onclick="showToast('Otwieram zapraszanie do grupy')">
                     <div class="w-8 h-8 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center"><i class="fa-solid fa-user-plus"></i></div>
                     <span class="font-semibold">Dodaj członka do grupy</span>
                 </button>
-
                 <div class="space-y-3 mt-6">
                     <h2 class="font-bold text-slate-800 dark:text-white mb-2 text-sm px-1">Członkowie</h2>
-                    <div id="group-members-list" class="space-y-3">
-                        <!-- Członkowie wstrzykiwani przez JavaScript -->
-                    </div>
+                    <div id="group-members-list" class="space-y-3"></div>
                 </div>
             </div>
         </div>
 
-
-        <!-- ================= EKRAN KONTAKTÓW ================= -->
+        <!-- Kontakty -->
         <div id="contact-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
             <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
                 <button onclick="closeContactScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
@@ -222,27 +267,12 @@
                         </div>
                         <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-95"><i class="fa-solid fa-phone"></i></button>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold">T</div>
-                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
-                        </div>
-                        <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-95"><i class="fa-solid fa-phone"></i></button>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold">A</div>
-                            <div><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
-                        </div>
-                        <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-95"><i class="fa-solid fa-phone"></i></button>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= EKRAN CHECK-IN ================= -->
+        <!-- Check-in -->
         <div id="checkin-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
-            <!-- pominąłem zawartość, zostawiona nienaruszona jak wcześniej -->
             <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3 transition-colors duration-300">
                 <button onclick="closeCheckinScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left text-xl"></i></button>
                 <h1 class="font-bold text-lg tracking-wide">Check in</h1>
@@ -260,16 +290,6 @@
                         <div class="text-left flex-1"><p class="font-bold text-sm text-slate-800 dark:text-white">Mama</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center check-indicator"></div>
                     </button>
-                    <button class="w-full checkin-contact-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-3 rounded-xl flex items-center gap-3 transition active:scale-95" onclick="selectCheckinContact(this, 'Tata')">
-                        <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold shrink-0">T</div>
-                        <div class="text-left flex-1"><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
-                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center check-indicator"></div>
-                    </button>
-                    <button class="w-full checkin-contact-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-3 rounded-xl flex items-center gap-3 transition active:scale-95" onclick="selectCheckinContact(this, 'Anna (Siostra)')">
-                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold shrink-0">A</div>
-                        <div class="text-left flex-1"><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Grupa Rodzinna</p></div>
-                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 flex items-center justify-center check-indicator"></div>
-                    </button>
                 </div>
             </div>
             <div class="p-4 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 shrink-0">
@@ -277,29 +297,7 @@
             </div>
         </div>
 
-        <!-- POZOSTAŁE EKRANY (ALERT, SOS, USTAWIENIA) Pozostały dokładnie takie jak wcześniej, skrócę je dla przejrzystości, aby nie ucinało odpowiedzi -->
-        
-        <!-- EKRAN ALERTÓW -->
-        <div id="alert-screen" class="hidden flex-1 flex-col bg-gray-50 dark:bg-slate-900 z-40 absolute inset-0 top-0 transition-colors duration-300">
-            <header class="bg-navy-900 dark:bg-black text-white p-4 shadow-md shrink-0 flex items-center gap-3"><button onclick="closeAlertScreen()" class="w-10 h-10 hover:bg-slate-800 rounded-full"><i class="fa-solid fa-arrow-left"></i></button><h1 class="font-bold text-lg">Dodaj zdarzenie</h1></header>
-            <div class="flex-1 overflow-y-auto p-4 space-y-6 hide-scrollbar">
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center"><i class="fa-solid fa-location-crosshairs"></i></div>
-                    <div><p class="font-bold text-blue-800 dark:text-blue-300 text-sm">Lokalizacja z GPS</p><p class="text-xs text-blue-600 dark:text-blue-400">Dodana do mapy.</p></div>
-                </div>
-                <div>
-                    <h2 class="font-bold text-slate-800 dark:text-white mb-3 text-sm">Co się dzieje?</h2>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2" onclick="selectCategory(this)"><div class="w-12 h-12 bg-red-50 text-red-500 dark:bg-red-500/10 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-car-burst"></i></div><span class="font-semibold text-sm dark:text-gray-200">Wypadek</span></button>
-                        <button class="category-btn bg-white dark:bg-slate-800 border-2 border-transparent shadow-sm p-4 rounded-xl flex flex-col items-center gap-2" onclick="selectCategory(this)"><div class="w-12 h-12 bg-purple-50 text-purple-500 dark:bg-purple-500/10 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-user-ninja"></i></div><span class="font-semibold text-sm dark:text-gray-200">Podejrzany</span></button>
-                    </div>
-                </div>
-                <textarea class="w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 text-sm dark:text-white shadow-sm resize-none" rows="3" placeholder="Opisz sytuację..."></textarea>
-            </div>
-            <div class="p-4 bg-white dark:bg-slate-800 border-t shrink-0"><button onclick="submitAlert()" class="w-full bg-red-600 text-white font-bold py-4 rounded-2xl">Wyślij alert</button></div>
-        </div>
-
-        <!-- EKRAN ANULOWANIA SOS -->
+        <!-- Anulowanie SOS -->
         <div id="loading-screen" class="hidden flex-1 flex-col items-center justify-center bg-gray-50 dark:bg-slate-900 z-50 absolute inset-0 top-0">
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-10 text-center">Inicjowanie procedury ratunkowej...</h2>
             <div class="relative w-36 h-36 mb-10 flex items-center justify-center">
@@ -309,7 +307,7 @@
             <button onclick="cancelHelpProcess()" class="w-full max-w-[280px] bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white font-bold py-4 rounded-2xl">Anuluj</button>
         </div>
 
-        <!-- EKRAN STATUSU SOS -->
+        <!-- Status SOS -->
         <div id="status-screen" class="hidden flex-1 flex-col items-center justify-between bg-red-50 dark:bg-red-950/20 z-50 p-6 absolute inset-0 top-0">
             <div class="w-full flex flex-col items-center mt-6">
                 <div class="w-20 h-20 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mb-4 btn-sos"><i class="fa-solid fa-tower-broadcast"></i></div>
@@ -340,6 +338,12 @@
     </div>
 
     <script>
+        // === ZMIANA EKRANÓW ===
+        function switchScreen(fromId, toId) {
+            document.getElementById(fromId).classList.add('hidden'); document.getElementById(fromId).classList.remove('flex', 'fade-in');
+            document.getElementById(toId).classList.remove('hidden'); document.getElementById(toId).classList.add('flex', 'fade-in');
+        }
+
         // === LOGIKA USTAWIEŃ ===
         function openSettings() { document.getElementById('settings-modal').classList.remove('hidden'); document.getElementById('settings-modal').classList.add('flex'); }
         function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); document.getElementById('settings-modal').classList.remove('flex'); }
@@ -359,82 +363,124 @@
             clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { toast.classList.remove('opacity-100', 'translate-y-0'); toast.classList.add('opacity-0', 'translate-y-[-20px]'); }, 3000);
         }
 
-        // === ZMIANA EKRANÓW ===
-        function switchScreen(fromId, toId) {
-            document.getElementById(fromId).classList.add('hidden'); document.getElementById(fromId).classList.remove('flex', 'fade-in');
-            document.getElementById(toId).classList.remove('hidden'); document.getElementById(toId).classList.add('flex', 'fade-in');
+        // === EKRAN ALERTÓW (Z POTWIERDZENIEM LOKALIZACJI) ===
+        let isLocationConfirmed = false;
+
+        function openAlertScreen() {
+            switchScreen('main-screen', 'alert-screen');
+            
+            // Resetuj formularz przy każdym otwarciu
+            isLocationConfirmed = false;
+            
+            // Reset Boxa z lokalizacją
+            const locBox = document.getElementById('location-box');
+            const locBtn = document.getElementById('confirm-location-btn');
+            const locIcon = document.getElementById('location-icon');
+            
+            locBox.className = "bg-white dark:bg-slate-800 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-2xl p-4 flex flex-col gap-4 shadow-sm transition-colors duration-300";
+            locIcon.className = "w-12 h-12 bg-blue-50 dark:bg-blue-900/40 text-blue-500 rounded-full flex items-center justify-center shrink-0 text-xl";
+            locIcon.innerHTML = '<i class="fa-solid fa-location-crosshairs animate-pulse"></i>';
+            
+            locBtn.className = "w-full bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-semibold py-3 rounded-xl border border-blue-200 dark:border-blue-800 transition active:scale-95 flex items-center justify-center gap-2";
+            locBtn.innerHTML = 'Potwierdź moją lokalizację';
+            locBtn.disabled = false;
+
+            // Reset Kategorii
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected');
+                btn.classList.add('border-transparent');
+            });
+            document.querySelector('#alert-screen textarea').value = '';
         }
 
-        // === DANE GRUP I EKRAN SZCZEGÓŁÓW ===
+        function closeAlertScreen() { switchScreen('alert-screen', 'main-screen'); }
+
+        // Potwierdzenie lokalizacji przez usera
+        function confirmAlertLocation() {
+            isLocationConfirmed = true;
+            
+            const locBox = document.getElementById('location-box');
+            const locBtn = document.getElementById('confirm-location-btn');
+            const locIcon = document.getElementById('location-icon');
+
+            // Zmień na zielony
+            locBox.className = "bg-green-50 dark:bg-green-900/10 border-2 border-green-500 rounded-2xl p-4 flex flex-col gap-4 shadow-sm transition-colors duration-300 category-selected";
+            locIcon.className = "w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center shrink-0 text-xl";
+            locIcon.innerHTML = '<i class="fa-solid fa-check"></i>';
+            
+            locBtn.className = "w-full bg-green-600 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2 opacity-60 cursor-not-allowed";
+            locBtn.innerHTML = '<i class="fa-solid fa-check-double"></i> Lokalizacja potwierdzona';
+            locBtn.disabled = true; // Zablokuj przycisk
+            
+            showToast('Lokalizacja potwierdzona poprawnie', 'success');
+        }
+
+        function selectCategory(btn) {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected'));
+            btn.classList.remove('border-transparent');
+            btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected'); 
+        }
+
+        function submitAlert() {
+            // Najpierw sprawdzamy lokalizację
+            if (!isLocationConfirmed) {
+                showToast('Najpierw potwierdź lokalizację (Krok 1)', 'error');
+                return;
+            }
+            
+            // Następnie sprawdzamy czy kategoria została wybrana
+            const isCategorySelected = document.querySelector('.category-btn.category-selected');
+            if(!isCategorySelected) { 
+                showToast('Wybierz rodzaj zagrożenia (Krok 2)', 'error'); 
+                return; 
+            }
+            
+            closeAlertScreen(); 
+            showToast('Zagrożenie zostało dodane do mapy', 'success'); 
+        }
+
+        // === GRUPY ===
         const groupsData = {
             'Grupa Rodzinna': `
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-bold">M</div>
-                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Mama</p><p class="text-xs text-gray-500 dark:text-gray-400">Admin</p></div>
-                    </div>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-bold">M</div><div><p class="font-bold text-sm text-slate-800 dark:text-white">Mama</p><p class="text-xs text-gray-500 dark:text-gray-400">Admin</p></div></div>
                     <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Dzwonię...')"><i class="fa-solid fa-phone"></i></button>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold">T</div>
-                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div>
-                    </div>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center font-bold">T</div><div><p class="font-bold text-sm text-slate-800 dark:text-white">Tata</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div></div>
                     <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Dzwonię...')"><i class="fa-solid fa-phone"></i></button>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold">A</div>
-                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div>
-                    </div>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center font-bold">A</div><div><p class="font-bold text-sm text-slate-800 dark:text-white">Anna (Siostra)</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div></div>
                     <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Dzwonię...')"><i class="fa-solid fa-phone"></i></button>
-                </div>
-            `,
+                </div>`,
             'Znajomi Kraków': `
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center font-bold">K</div>
-                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Kamil</p><p class="text-xs text-gray-500 dark:text-gray-400">Admin</p></div>
-                    </div>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center font-bold">K</div><div><p class="font-bold text-sm text-slate-800 dark:text-white">Kamil</p><p class="text-xs text-gray-500 dark:text-gray-400">Admin</p></div></div>
                     <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Wysyłam powiadomienie')"><i class="fa-regular fa-bell"></i></button>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center font-bold">P</div>
-                        <div><p class="font-bold text-sm text-slate-800 dark:text-white">Piotr</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div>
-                    </div>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center font-bold">P</div><div><p class="font-bold text-sm text-slate-800 dark:text-white">Piotr</p><p class="text-xs text-gray-500 dark:text-gray-400">Członek</p></div></div>
                     <button class="w-10 h-10 bg-gray-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 transition active:scale-95" onclick="showToast('Wysyłam powiadomienie')"><i class="fa-regular fa-bell"></i></button>
-                </div>
-            `
+                </div>`
         };
-
         function openGroupsScreen() { switchScreen('main-screen', 'groups-screen'); }
         function closeGroupsScreen() { switchScreen('groups-screen', 'main-screen'); }
-        
-        // NOWE: Dynamiczne ładowanie listy członków grupy
-        function openGroupDetails(groupName) {
-            document.getElementById('group-details-title').textContent = groupName;
-            document.getElementById('group-members-list').innerHTML = groupsData[groupName] || '<p class="text-sm text-gray-500">Brak członków w grupie.</p>';
-            switchScreen('groups-screen', 'group-details-screen');
-        }
+        function openGroupDetails(groupName) { document.getElementById('group-details-title').textContent = groupName; document.getElementById('group-members-list').innerHTML = groupsData[groupName] || ''; switchScreen('groups-screen', 'group-details-screen'); }
         function closeGroupDetails() { switchScreen('group-details-screen', 'groups-screen'); }
 
-        // Alert
-        function openAlertScreen() { switchScreen('main-screen', 'alert-screen'); }
-        function closeAlertScreen() { switchScreen('alert-screen', 'main-screen'); }
-        function selectCategory(btn) { document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected')); btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/30', 'category-selected'); }
-        function submitAlert() { if(document.querySelector('.category-selected')) { closeAlertScreen(); showToast('Dodano zdarzenie do mapy', 'success'); } else showToast('Wybierz typ', 'error'); }
-
-        // Contact & Checkin
+        // === KONTAKTY ===
         function openContactScreen() { switchScreen('main-screen', 'contact-screen'); }
         function closeContactScreen() { switchScreen('contact-screen', 'main-screen'); }
-        let selectedCheckin = null;
-        function openCheckinScreen() { switchScreen('main-screen', 'checkin-screen'); selectedCheckin = null; }
-        function closeCheckinScreen() { switchScreen('checkin-screen', 'main-screen'); }
-        function selectCheckinContact(btn, name) { selectedCheckin = name; document.querySelectorAll('.checkin-contact-btn').forEach(b => { b.classList.remove('border-green-500', 'bg-green-50'); b.querySelector('.check-indicator').innerHTML = ''; b.querySelector('.check-indicator').classList.remove('border-green-500', 'bg-green-500'); }); btn.classList.add('border-green-500', 'bg-green-50'); btn.querySelector('.check-indicator').classList.add('border-green-500', 'bg-green-500'); btn.querySelector('.check-indicator').innerHTML = '<i class="fa-solid fa-check text-white text-xs"></i>'; }
-        function submitCheckin() { if(selectedCheckin) { closeCheckinScreen(); showToast('Wysłano do: ' + selectedCheckin, 'success'); } else showToast('Wybierz osobę', 'error'); }
 
-        // SOS (Uproszczone dla podglądu)
+        // === CHECK IN ===
+        let selectedCheckin = null;
+        function openCheckinScreen() { switchScreen('main-screen', 'checkin-screen'); selectedCheckin = null; document.querySelectorAll('.checkin-contact-btn').forEach(b => { b.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/30', 'category-selected'); b.querySelector('.check-indicator').innerHTML = ''; b.querySelector('.check-indicator').classList.remove('border-green-500', 'bg-green-500'); }); }
+        function closeCheckinScreen() { switchScreen('checkin-screen', 'main-screen'); }
+        function selectCheckinContact(btn, name) { selectedCheckin = name; document.querySelectorAll('.checkin-contact-btn').forEach(b => { b.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/30', 'category-selected'); b.querySelector('.check-indicator').innerHTML = ''; b.querySelector('.check-indicator').classList.remove('border-green-500', 'bg-green-500'); }); btn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/30', 'category-selected'); btn.querySelector('.check-indicator').classList.add('border-green-500', 'bg-green-500'); btn.querySelector('.check-indicator').innerHTML = '<i class="fa-solid fa-check text-white text-xs"></i>'; }
+        function submitCheckin() { if(selectedCheckin) { closeCheckinScreen(); showToast('Wysłano do: ' + selectedCheckin, 'success'); } else showToast('Wybierz osobę z listy', 'error'); }
+
+        // === SOS ===
         let countdownInterval;
         function startHelpProcess() { switchScreen('main-screen', 'loading-screen'); let t = 5; document.getElementById('countdown-timer').textContent = t; countdownInterval = setInterval(() => { t--; document.getElementById('countdown-timer').textContent = t; if(t<=0) { clearInterval(countdownInterval); switchScreen('loading-screen', 'status-screen'); } }, 1000); }
         function cancelHelpProcess() { clearInterval(countdownInterval); switchScreen('loading-screen', 'main-screen'); }
