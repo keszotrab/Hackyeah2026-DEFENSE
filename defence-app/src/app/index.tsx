@@ -5,126 +5,124 @@ import {
   View,
   SafeAreaView,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
-  ActivityIndicator,
+  ScrollView,
 } from 'react-native';
-import OSMWebView from '../components/map/OSMWebView';
-import AddDangerModal from '../components/add-danger-modal';
+
 import SOSAlertBanner from '../components/sos-alert-banner';
 import SettingsModal from '../components/settings-modal';
 import SOSCountdownModal from '../components/sos-countdown-modal';
 import SOSEscalationModal from '../components/sos-escalation-modal';
-import FeatureGrid from '../components/feature-grid';
 import ChatbotModal from '../components/chatbot-modal';
 import ContactsModal from '../components/contacts-modal';
+import FeatureGrid from '../components/feature-grid';
+import SafeTimerModal from '../components/safe-timer-modal';
 
 import { useLocation } from '../hooks/use-location';
 import { useSettings } from '../services/settings-context';
-import {
-  DefenseStore,
-  DangerousLocation,
-  SOSAlert,
-} from '../services/defense-store';
+import { DefenseStore, SOSAlert } from '../services/defense-store';
 
 export default function HomeScreen() {
-  const { location, loading: locationLoading, refreshLocation } = useLocation();
+  const { location } = useLocation();
   const { isDarkMode, isHighContrast, isEasyMode, theme, showToast } = useSettings();
 
-  const [dangerousLocations, setDangerousLocations] = useState<DangerousLocation[]>([]);
   const [sosAlerts, setSosAlerts] = useState<SOSAlert[]>([]);
 
   // Modale i widoczność
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
-  const [isAddDangerVisible, setIsAddDangerVisible] = useState(false);
   const [isSOSCountdownVisible, setIsSOSCountdownVisible] = useState(false);
   const [isSOSEscalationVisible, setIsSOSEscalationVisible] = useState(false);
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [isContactsVisible, setIsContactsVisible] = useState(false);
-  const [isMapVisible, setIsMapVisible] = useState(true);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isMapInteracting, setIsMapInteracting] = useState(false);
-  const [selectedCoords, setSelectedCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [isSafeTimerVisible, setIsSafeTimerVisible] = useState(false);
+
+  // Tryby alarmowania
+  const [alertMode, setAlertMode] = useState<'rodzina' | 'spolecznosc' | 'poblizu'>('rodzina');
 
   // Załaduj zapisane dane
   useEffect(() => {
-    let isMounted = true;
-    async function loadData() {
-      try {
-        const dangers = await DefenseStore.getDangerousLocations();
-        const sosList = await DefenseStore.getSOSAlerts();
-        if (isMounted) {
-          setDangerousLocations(dangers);
-          setSosAlerts(sosList.filter((s) => s.active));
-        }
-      } catch (e) {
-        console.error('Błąd ładowania danych:', e);
-      }
-    }
     loadData();
-    return () => {
-      isMounted = false;
-    };
+    const interval = setInterval(loadData, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  // --- SOS FLOW ---
+  const loadData = async () => {
+    const alerts = await DefenseStore.getSOSAlerts();
+    setSosAlerts(alerts);
+  };
+
   const handleStartSOSProcess = () => {
-    setIsSOSCountdownVisible(true);
+    if (isEasyMode) {
+      handleCompleteSOSCountdown();
+    } else {
+      setIsSOSCountdownVisible(true);
+    }
   };
 
   const handleCancelSOSCountdown = () => {
     setIsSOSCountdownVisible(false);
-    showToast('Procedura SOS anulowana', 'info');
+    showToast('Anulowano SOS', 'info');
   };
 
   const handleCompleteSOSCountdown = async () => {
     setIsSOSCountdownVisible(false);
+    await DefenseStore.triggerSOS(
+      location.latitude,
+      location.longitude
+    );
     setIsSOSEscalationVisible(true);
-    try {
-      const newSOS = await DefenseStore.triggerSOS(
-        location.latitude,
-        location.longitude,
-        'Twój Profil (SOS)',
-        'Potrzebuję pomocy w mojej lokalizacji!'
-      );
-      setSosAlerts((prev) => [newSOS, ...prev]);
-      showToast('Wysłano sygnał SOS!', 'error');
-    } catch {
-      showToast('Nie udało się nadać sygnału SOS', 'error');
-    }
+    loadData();
+
+    let modeText = 'najbliższych (Rodzina)';
+    if (alertMode === 'spolecznosc') modeText = 'społeczności (np. Twoja klasa)';
+    if (alertMode === 'poblizu') modeText = 'osób w pobliżu (Radar)';
+    showToast(`Wysłano powiadomienie do: ${modeText}`);
   };
 
   const handleRevokeSOS = async () => {
     setIsSOSEscalationVisible(false);
-    if (sosAlerts.length > 0) {
-      const updated = await DefenseStore.resolveSOS(sosAlerts[0].id);
-      setSosAlerts(updated.filter((s) => s.active));
+    const active = sosAlerts.find((s) => s.active);
+    if (active) {
+      await DefenseStore.resolveSOS(active.id);
     }
-    showToast('Alarm SOS został odwołany', 'success');
+    loadData();
+    showToast('Odwołano wezwanie pomocy');
   };
 
-  // --- DODAWANIE ZAGROŻENIA ---
-  const handleSaveDanger = async (dangerData: Omit<DangerousLocation, 'id' | 'timestamp'>) => {
-    try {
-      const updated = await DefenseStore.addDangerousLocation(dangerData);
-      setDangerousLocations(updated);
-      showToast('Punkt zagrożenia został dodany!', 'success');
-    } catch {
-      showToast('Nie udało się dodać punktu', 'error');
-    }
-  };
-
-  const handleDeleteDanger = async (id: string) => {
-    try {
-      const updated = await DefenseStore.deleteDangerousLocation(id);
-      setDangerousLocations(updated);
-      showToast('Usunięto znacznik', 'info');
-    } catch {
-      showToast('Nie udało się usunąć znacznika', 'error');
-    }
-  };
-
-  const activeSOSCount = sosAlerts.length;
+  const renderAlertModeSelector = () => (
+    <View style={styles.alertModeContainer}>
+      <Text style={[styles.alertModeTitle, { color: theme.text }]}>Odbiorcy alertu (Tryb)</Text>
+      <View style={styles.alertModeRow}>
+        <TouchableOpacity
+          style={[
+            styles.alertModeBtn,
+            { backgroundColor: alertMode === 'rodzina' ? '#3B82F6' : theme.cardBg, borderColor: theme.border },
+          ]}
+          onPress={() => setAlertMode('rodzina')}
+        >
+          <Text style={[styles.alertModeBtnText, { color: alertMode === 'rodzina' ? '#FFF' : theme.textSecondary }]}>Rodzina</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.alertModeBtn,
+            { backgroundColor: alertMode === 'spolecznosc' ? '#8B5CF6' : theme.cardBg, borderColor: theme.border },
+          ]}
+          onPress={() => setAlertMode('spolecznosc')}
+        >
+          <Text style={[styles.alertModeBtnText, { color: alertMode === 'spolecznosc' ? '#FFF' : theme.textSecondary }]}>Społeczność</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.alertModeBtn,
+            { backgroundColor: alertMode === 'poblizu' ? '#EF4444' : theme.cardBg, borderColor: theme.border },
+          ]}
+          onPress={() => setAlertMode('poblizu')}
+        >
+          <Text style={[styles.alertModeBtnText, { color: alertMode === 'poblizu' ? '#FFF' : theme.textSecondary }]}>W pobliżu</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView
@@ -134,30 +132,24 @@ export default function HomeScreen() {
         isHighContrast && styles.highContrastContainer,
       ]}
     >
-      <StatusBar
-        barStyle={isDarkMode || isHighContrast ? 'light-content' : 'dark-content'}
-        backgroundColor={theme.headerBg}
-      />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
 
-      {/* NAGŁÓWEK - CENTRUM BEZPIECZEŃSTWA */}
+      {/* HEADER */}
       <View
         style={[
           styles.header,
-          { backgroundColor: theme.headerBg, borderBottomColor: theme.border },
+          { backgroundColor: theme.cardBg, borderBottomColor: theme.border },
           isHighContrast && styles.highContrastBorderBottom,
         ]}
       >
         <View style={styles.headerLeft}>
           <Text style={styles.headerLogoIcon}>🛡️</Text>
-          <Text style={[styles.headerTitle, { color: '#FFFFFF' }]}>
-            Centrum Bezpieczeństwa
-          </Text>
+          <Text style={[styles.headerTitle, { color: theme.text }]}>DEFENSE</Text>
         </View>
 
         <View style={styles.headerRight}>
           {!isEasyMode && (
             <>
-              {/* Powiadomienia */}
               <TouchableOpacity
                 style={styles.headerIconBtn}
                 onPress={() => showToast('Brak nowych powiadomień', 'info')}
@@ -165,8 +157,6 @@ export default function HomeScreen() {
                 <Text style={styles.headerIconText}>🔔</Text>
                 <View style={styles.notifBadge} />
               </TouchableOpacity>
-
-              {/* Profil */}
               <TouchableOpacity
                 style={styles.headerIconBtn}
                 onPress={() => showToast('Profil użytkownika DEFENSE', 'info')}
@@ -175,8 +165,6 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </>
           )}
-
-          {/* Ustawienia (Zawsze widoczne) */}
           <TouchableOpacity
             style={styles.headerIconBtn}
             onPress={() => setIsSettingsVisible(true)}
@@ -186,7 +174,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* BANER ALARMU SOS */}
       <SOSAlertBanner
         activeSOSList={sosAlerts}
         onResolveSOS={async (id) => {
@@ -194,193 +181,79 @@ export default function HomeScreen() {
           setSosAlerts(updated.filter((s) => s.active));
           showToast('Odwołano alert SOS', 'success');
         }}
-        onFlyToSOS={(coords) => {
-          setSelectedCoords(coords);
-          setIsMapVisible(true);
+        onFlyToSOS={() => {
+          showToast('Przejdź do zakładki Mapa', 'info');
         }}
       />
 
-      <ScrollView
-        style={styles.scrollArea}
-        contentContainerStyle={styles.scrollContent}
-        scrollEnabled={!isMapInteracting}
-        nestedScrollEnabled={true}
-      >
-        {/* DUŻY CENTRALNY PRZYCISK SOS / POMOC */}
-        <View style={styles.sosSection}>
-          <TouchableOpacity
-            style={[
-              styles.sosMainBtn,
-              isEasyMode && styles.sosMainBtnEasy,
-              isHighContrast && styles.highContrastSOSBtn,
-            ]}
-            onPress={handleStartSOSProcess}
-            activeOpacity={0.85}
-          >
-            <Text style={[styles.sosIcon, isEasyMode && styles.sosIconEasy]}>🚨</Text>
-            <Text
+      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.mainContent}>
+          {renderAlertModeSelector()}
+
+          <View style={styles.sosSection}>
+            <TouchableOpacity
               style={[
-                styles.sosText,
-                isEasyMode && styles.sosTextEasy,
-                isHighContrast && styles.highContrastSOSText,
+                styles.sosMainBtn,
+                isEasyMode && styles.sosMainBtnEasy,
+                isHighContrast && styles.highContrastSOSBtn,
               ]}
+              onPress={handleStartSOSProcess}
+              activeOpacity={0.85}
             >
-              {isEasyMode ? 'POMOC' : 'POTRZEBUJĘ\nPOMOCY'}
+              <Text style={[styles.sosIcon, isEasyMode && styles.sosIconEasy]}>🆘</Text>
+              <Text
+                style={[
+                  styles.sosText,
+                  isEasyMode && styles.sosTextEasy,
+                  isHighContrast && styles.highContrastSOSText,
+                ]}
+              >
+                {isEasyMode ? 'POMOC' : 'POTRZEBUJĘ\nPOMOCY'}
+              </Text>
+            </TouchableOpacity>
+            <Text style={[styles.sosSubtext, { color: theme.textSecondary }]}>
+              Naciśnij w nagłej sytuacji
             </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.timerButton, { backgroundColor: theme.cardBg, borderColor: theme.border }]}
+            onPress={() => setIsSafeTimerVisible(true)}
+          >
+            <Text style={styles.timerButtonIcon}>⏳</Text>
+            <View style={styles.timerButtonTexts}>
+              <Text style={[styles.timerButtonTitle, { color: theme.text }]}>Timer Bezpieczeństwa</Text>
+              <Text style={[styles.timerButtonSub, { color: theme.textSecondary }]}>
+                Ustaw czas, po którym wyślemy powiadomienie
+              </Text>
+            </View>
           </TouchableOpacity>
-          <Text style={[styles.sosSubtext, { color: theme.textSecondary }]}>
-            Naciśnij w nagłej sytuacji
-          </Text>
+
+          <FeatureGrid
+            onOpenAlerts={() => showToast('Przejdź do zakładki Mapa', 'info')}
+            onOpenGroups={() => setIsContactsVisible(true)}
+            onToggleMap={() => showToast('Przejdź do zakładki Mapa', 'info')}
+            onOpenContacts={() => setIsContactsVisible(true)}
+            onOpenChatbot={() => setIsChatbotVisible(true)}
+            onCheckIn={() => showToast('Zrobiono Check-in z grupą!', 'success')}
+          />
         </View>
-
-        {/* SIATKA SKRÓTÓW FUNKCJI (GRID) */}
-        <FeatureGrid
-          onOpenAlerts={() => {
-            setSelectedCoords({ latitude: location.latitude, longitude: location.longitude });
-            setIsAddDangerVisible(true);
-          }}
-          onOpenGroups={() => setIsContactsVisible(true)}
-          onToggleMap={() => {
-            setIsMapVisible(!isMapVisible);
-            showToast(isMapVisible ? 'Ukryto mapę' : 'Otwarto mapę taktyczną', 'info');
-          }}
-          onOpenContacts={() => setIsContactsVisible(true)}
-          onOpenChatbot={() => setIsChatbotVisible(true)}
-          onCheckIn={() => {}}
-        />
-
-        {/* WIDOK MAPY TAKTYCZNEJ */}
-        {isMapVisible && (
-          <View
-            style={[
-              styles.mapWrapper,
-              { borderColor: theme.border },
-              isHighContrast && styles.highContrastCardBorder,
-            ]}
-          >
-            <View style={[styles.mapHeader, { backgroundColor: theme.cardBg }]}>
-              <View style={styles.mapHeaderTitleRow}>
-                <Text style={styles.mapHeaderIcon}>📍</Text>
-                <Text style={[styles.mapHeaderTitle, { color: theme.text }]}>
-                  Mapa Taktyczna {activeSOSCount > 0 ? `(🚨 ${activeSOSCount} SOS)` : ''}
-                </Text>
-              </View>
-
-              <View style={styles.mapHeaderControls}>
-                <TouchableOpacity style={styles.mapControlChip} onPress={refreshLocation}>
-                  <Text style={styles.mapControlChipText}>🎯 Moja Pozycja</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.mapControlChip}
-                  onPress={() => setIsDrawerOpen(!isDrawerOpen)}
-                >
-                  <Text style={styles.mapControlChipText}>
-                    📋 Lista ({dangerousLocations.length})
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.mapFrame}>
-              {locationLoading ? (
-                <View style={styles.mapLoader}>
-                  <ActivityIndicator size="large" color="#DC2626" />
-                </View>
-              ) : (
-                <OSMWebView
-                  userLocation={{ latitude: location.latitude, longitude: location.longitude }}
-                  dangerousLocations={dangerousLocations}
-                  sosAlerts={sosAlerts}
-                  onMapClick={(coords) => {
-                    setSelectedCoords(coords);
-                    setIsAddDangerVisible(true);
-                  }}
-                  onInteractionStart={() => setIsMapInteracting(true)}
-                  onInteractionEnd={() => setIsMapInteracting(false)}
-                  zoom={14}
-                  themeMode={isHighContrast ? 'highcontrast' : isDarkMode ? 'dark' : 'light'}
-                />
-              )}
-            </View>
-          </View>
-        )}
-
-        {/* DRAWER LISTA ZAGROŻEŃ */}
-        {isDrawerOpen && (
-          <View
-            style={[
-              styles.drawerBox,
-              { backgroundColor: theme.cardBg, borderColor: theme.border },
-              isHighContrast && styles.highContrastCardBorder,
-            ]}
-          >
-            <Text style={[styles.drawerTitle, { color: theme.text }]}>
-              ⚠️ Oznaczone zagrożenia na mapie ({dangerousLocations.length})
-            </Text>
-            {dangerousLocations.map((item) => (
-              <View key={item.id} style={styles.dangerRow}>
-                <View style={styles.dangerRowInfo}>
-                  <Text style={[styles.dangerRowTitle, { color: '#EF4444' }]}>{item.title}</Text>
-                  <Text style={[styles.dangerRowDesc, { color: theme.textSecondary }]}>
-                    {item.description}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.deleteBtn}
-                  onPress={() => handleDeleteDanger(item.id)}
-                >
-                  <Text style={styles.deleteBtnText}>Usuń</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        )}
       </ScrollView>
 
-      {/* MODALE */}
-      <SettingsModal
-        visible={isSettingsVisible}
-        onClose={() => setIsSettingsVisible(false)}
-      />
+      <SettingsModal visible={isSettingsVisible} onClose={() => setIsSettingsVisible(false)} />
+      <SOSCountdownModal visible={isSOSCountdownVisible} onCancel={handleCancelSOSCountdown} onComplete={handleCompleteSOSCountdown} />
+      <SOSEscalationModal visible={isSOSEscalationVisible} onRevoke={handleRevokeSOS} />
+      <ChatbotModal visible={isChatbotVisible} onClose={() => setIsChatbotVisible(false)} />
+      <ContactsModal visible={isContactsVisible} onClose={() => setIsContactsVisible(false)} />
+      <SafeTimerModal visible={isSafeTimerVisible} onClose={() => setIsSafeTimerVisible(false)} onTimerExpired={handleCompleteSOSCountdown} />
 
-      <AddDangerModal
-        visible={isAddDangerVisible}
-        initialCoords={selectedCoords}
-        onClose={() => setIsAddDangerVisible(false)}
-        onSave={handleSaveDanger}
-      />
-
-      <SOSCountdownModal
-        visible={isSOSCountdownVisible}
-        onCancel={handleCancelSOSCountdown}
-        onComplete={handleCompleteSOSCountdown}
-      />
-
-      <SOSEscalationModal
-        visible={isSOSEscalationVisible}
-        onRevoke={handleRevokeSOS}
-      />
-
-      <ChatbotModal
-        visible={isChatbotVisible}
-        onClose={() => setIsChatbotVisible(false)}
-      />
-
-      <ContactsModal
-        visible={isContactsVisible}
-        onClose={() => setIsContactsVisible(false)}
-      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  highContrastContainer: {
-    backgroundColor: '#000000',
-  },
+  container: { flex: 1 },
+  highContrastContainer: { backgroundColor: '#000000' },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -389,56 +262,53 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
   },
-  highContrastBorderBottom: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFFF00',
-  },
-  headerLeft: {
-    flexDirection: 'row',
+  highContrastBorderBottom: { borderBottomWidth: 2, borderBottomColor: '#FFFF00' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  headerLogoIcon: { fontSize: 22 },
+  headerTitle: { fontSize: 16, fontWeight: 'bold', letterSpacing: 0.5 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  headerIconBtn: { padding: 8, borderRadius: 20, position: 'relative' },
+  headerIconText: { fontSize: 18 },
+  notifBadge: { position: 'absolute', top: 6, right: 6, width: 8, height: 8, borderRadius: 4, backgroundColor: '#EF4444' },
+  scrollArea: { flex: 1, width: '100%' },
+  scrollContent: { flexGrow: 1 },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 16,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  alertModeContainer: {
+    width: '100%',
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  alertModeTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  alertModeRow: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
     gap: 8,
   },
-  headerLogoIcon: {
-    fontSize: 22,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  headerIconBtn: {
-    padding: 8,
-    borderRadius: 20,
-    position: 'relative',
-  },
-  headerIconText: {
-    fontSize: 18,
-  },
-  notifBadge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#EF4444',
-  },
-  scrollArea: {
+  alertModeBtn: {
     flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
   },
-  scrollContent: {
-    paddingBottom: 24,
+  alertModeBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
-  // SOS SECTION
   sosSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 24,
+    paddingVertical: 20,
   },
   sosMainBtn: {
     width: 200,
@@ -455,137 +325,37 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 12,
   },
-  sosMainBtnEasy: {
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-  },
-  highContrastSOSBtn: {
-    backgroundColor: '#FF0000',
-    borderColor: '#FFFFFF',
-    borderWidth: 6,
-  },
-  sosIcon: {
-    fontSize: 48,
-    marginBottom: 6,
-  },
-  sosIconEasy: {
-    fontSize: 56,
-  },
-  sosText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '900',
-    textAlign: 'center',
-    letterSpacing: 1,
-  },
-  sosTextEasy: {
-    fontSize: 26,
-  },
-  highContrastSOSText: {
-    color: '#FFFFFF',
-  },
-  sosSubtext: {
-    fontSize: 12,
-    marginTop: 14,
-    fontWeight: '500',
-  },
-  // MAP SECTION
-  mapWrapper: {
-    marginHorizontal: 14,
-    marginTop: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  highContrastCardBorder: {
-    borderWidth: 2,
-    borderColor: '#FFFF00',
-  },
-  mapHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  mapHeaderTitleRow: {
+  sosMainBtnEasy: { width: 240, height: 240, borderRadius: 120 },
+  highContrastSOSBtn: { backgroundColor: '#FF0000', borderColor: '#FFFFFF', borderWidth: 6 },
+  sosIcon: { fontSize: 48, marginBottom: 6 },
+  sosIconEasy: { fontSize: 56 },
+  sosText: { color: '#FFFFFF', fontSize: 20, fontWeight: '900', textAlign: 'center', letterSpacing: 1 },
+  sosTextEasy: { fontSize: 26 },
+  highContrastSOSText: { color: '#FFFFFF' },
+  sosSubtext: { fontSize: 12, marginTop: 14, fontWeight: '500' },
+  timerButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-  },
-  mapHeaderIcon: {
-    fontSize: 16,
-  },
-  mapHeaderTitle: {
-    fontSize: 13,
-    fontWeight: 'bold',
-  },
-  mapHeaderControls: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  mapControlChip: {
-    backgroundColor: '#334155',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-  },
-  mapControlChipText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  mapFrame: {
-    height: 280,
-    backgroundColor: '#0F172A',
-  },
-  mapLoader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  drawerBox: {
-    marginHorizontal: 14,
-    marginTop: 10,
-    padding: 14,
+    width: '100%',
+    padding: 16,
     borderRadius: 16,
     borderWidth: 1,
+    marginTop: 20,
+    marginBottom: 20,
   },
-  drawerTitle: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  timerButtonIcon: {
+    fontSize: 24,
+    marginRight: 16,
   },
-  dangerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.08)',
-  },
-  dangerRowInfo: {
+  timerButtonTexts: {
     flex: 1,
-    paddingRight: 10,
   },
-  dangerRowTitle: {
-    fontSize: 13,
+  timerButtonTitle: {
+    fontSize: 15,
     fontWeight: 'bold',
   },
-  dangerRowDesc: {
-    fontSize: 11,
-    marginTop: 2,
-  },
-  deleteBtn: {
-    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  deleteBtnText: {
-    color: '#EF4444',
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
+  timerButtonSub: {
+    fontSize: 12,
+    marginTop: 4,
+  }
 });
