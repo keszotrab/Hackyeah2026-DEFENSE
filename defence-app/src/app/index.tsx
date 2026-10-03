@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -36,6 +36,8 @@ export default function HomeScreen() {
   const [dangerousLocations, setDangerousLocations] = useState<DangerousLocation[]>([]);
   const [sosAlerts, setSosAlerts] = useState<SOSAlert[]>([]);
   const [isStatusBarVisible, setIsStatusBarVisible] = useState(false);
+  const previousScrollOffset = useRef(0);
+  const accumulatedScrollDelta = useRef(0);
 
   // Modale i widoczność
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
@@ -131,7 +133,19 @@ export default function HomeScreen() {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = Math.max(0, event.nativeEvent.contentOffset.y);
-    setIsStatusBarVisible(offsetY === 0);
+    const scrollDelta = offsetY - previousScrollOffset.current;
+
+    accumulatedScrollDelta.current += scrollDelta;
+
+    if (offsetY > 0 && accumulatedScrollDelta.current <= -24) {
+      setIsStatusBarVisible(true);
+      accumulatedScrollDelta.current = 0;
+    } else if (accumulatedScrollDelta.current >= 24) {
+      setIsStatusBarVisible(false);
+      accumulatedScrollDelta.current = 0;
+    }
+
+    previousScrollOffset.current = offsetY;
   };
 
   return (
