@@ -12,6 +12,8 @@ interface OSMWebViewProps {
   zoom?: number;
   interactive?: boolean;
   themeMode?: 'light' | 'dark' | 'highcontrast';
+  onInteractionStart?: () => void;
+  onInteractionEnd?: () => void;
 }
 
 export default function OSMWebView({
@@ -23,6 +25,8 @@ export default function OSMWebView({
   zoom = 14,
   interactive = true,
   themeMode = 'dark',
+  onInteractionStart,
+  onInteractionEnd,
 }: OSMWebViewProps) {
   const webViewRef = useRef<WebView>(null);
 
@@ -237,7 +241,11 @@ export default function OSMWebView({
         style={styles.webview}
         javaScriptEnabled={true}
         domStorageEnabled={true}
+        nestedScrollEnabled={true}
         onMessage={handleMessage}
+        onTouchStart={onInteractionStart}
+        onTouchEnd={onInteractionEnd}
+        onTouchCancel={onInteractionEnd}
       />
     </View>
   );
