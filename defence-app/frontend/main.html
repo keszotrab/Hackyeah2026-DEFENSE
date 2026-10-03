@@ -57,26 +57,24 @@
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
+    
 </head>
 <body class="bg-gray-200 min-h-screen flex items-center justify-center p-4 font-sans text-slate-800">
-
-    <!-- Symulator telefonu -->
-    <div class="relative w-full max-w-[400px] h-[800px] max-h-[90vh] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col border-[8px] border-slate-900 ring-4 ring-gray-300">
-        
-        <!-- Pasek stanu (fejk) -->
-        <div class="bg-navy-900 text-white px-6 py-2 flex justify-between items-center text-xs font-medium shrink-0 z-50 relative">
-            <span>12:45</span>
-            <div class="flex gap-2">
-                <i class="fas fa-wifi"></i>
-                <i class="fas fa-signal"></i>
-                <i class="fas fa-battery-three-quarters"></i>
-            </div>
-        </div>
+    
+   
 
         <div id="main-screen" class="flex-1 flex flex-col bg-gray-50 overflow-y-auto hide-scrollbar z-10">
-            <header class="bg-navy-900 text-white p-5 text-center shadow-md shrink-0">
-                <h1 class="font-bold text-xl tracking-wide">Centrum Bezpieczeństwa</h1>
-            </header>
+           <header class="bg-navy-900 text-white p-4 shadow-md shrink-0 flex justify-between items-center">
+        <button onclick="showToast('Ustawienia aplikacji')" class="p-2 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
+            <i class="fa-solid fa-gear text-xl"></i>
+        </button>
+        
+        <h1 class="font-bold text-lg tracking-wide">Centrum Bezpieczeństwa</h1>
+        
+        <button onclick="showToast('Twój profil')" class="p-2 hover:bg-slate-800 rounded-full transition active:scale-95 flex items-center justify-center">
+            <i class="fa-solid fa-user text-xl"></i>
+        </button>
+    </header> 
 
             <div class="flex flex-col items-center justify-center py-10 px-4 shrink-0">
                 <button onclick="startHelpProcess()" class="btn-sos bg-red-600 hover:bg-red-700 text-white w-56 h-56 rounded-full flex flex-col items-center justify-center shadow-2xl transition transform active:scale-95 border-4 border-red-200 relative overflow-hidden group">
@@ -88,42 +86,43 @@
             </div>
 
             <!-- Siatka funkcji -->
-            <div class="px-4 pb-8 grid grid-cols-2 gap-4 flex-1 content-start">
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Ustawienia aplikacji')">
-                    <div class="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-gear"></i></div>
-                    <span class="font-semibold text-sm">Ustawienia</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Twój profil')">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-user"></i></div>
-                    <span class="font-semibold text-sm">Konto</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95 relative" onclick="showToast('Brak nowych zagrożeń')">
-                    <div class="absolute top-3 right-8 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
-                    <div class="w-10 h-10 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-bell"></i></div>
-                    <span class="font-semibold text-sm">Alerty</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Zarządzanie bliskimi')">
-                    <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
-                    <span class="font-semibold text-sm">Moje grupy</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Otwieram mapę')">
-                    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-map-location-dot"></i></div>
-                    <span class="font-semibold text-sm">Mapa</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Lista kontaktów')">
-                    <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-address-book"></i></div>
-                    <span class="font-semibold text-sm">Kontakt</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Uruchamiam asystenta AI')">
-                    <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-robot"></i></div>
-                    <span class="font-semibold text-sm">Chatbot</span>
-                </button>
-                <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Zameldowano pomyślnie!', 'success')">
-                    <div class="w-10 h-10 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-location-dot"></i></div>
-                    <span class="font-semibold text-sm">Check in</span>
-                </button>
-            </div>
-        </div>
+<div class="grid grid-cols-3 gap-4 p-4">
+    <!-- Przycisk 1: Alerty -->
+    <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95 relative" onclick="showToast('Brak nowych zagrożeń')">
+        <div class="w-10 h-10 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-bell"></i></div>
+        <span class="font-semibold text-sm">Alerty</span>
+    </button>
+    
+    <!-- Przycisk 2: Moje grupy -->
+    <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Zarządzanie bliskimi')">
+        <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
+        <span class="font-semibold text-sm">Moje grupy</span>
+    </button>
+    
+    <!-- Przycisk 3: Mapa -->
+    <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Otwieram mapę')">
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-map-location-dot"></i></div>
+        <span class="font-semibold text-sm">Mapa</span>
+    </button>
+    
+    <!-- Przycisk 4: Kontakt -->
+    <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Lista kontaktów')">
+        <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-address-book"></i></div>
+        <span class="font-semibold text-sm">Kontakt</span>
+    </button>
+    
+    <!-- Przycisk 5: Chatbot -->
+    <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Uruchamiam asystenta AI')">
+        <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-robot"></i></div>
+        <span class="font-semibold text-sm">Chatbot</span>
+    </button>
+    
+    <!-- Przycisk 6: Check in -->
+    <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center gap-2 transition active:scale-95" onclick="showToast('Zameldowano pomyślnie!', 'success')">
+        <div class="w-10 h-10 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-lg"><i class="fa-solid fa-location-dot"></i></div>
+        <span class="font-semibold text-sm">Check in</span>
+    </button>
+</div>
 
         <div id="loading-screen" class="hidden flex-1 flex-col items-center justify-center bg-gray-50 z-20 px-6 absolute inset-0 top-8">
             <h2 class="text-2xl font-bold text-slate-800 mb-10">Wysyłanie zgłoszenia...</h2>
