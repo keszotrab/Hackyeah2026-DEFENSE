@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { DangerCategory, DangerSeverity, DangerousLocation } from '../services/defense-store';
+import { useSettings } from '../services/settings-context';
 
 interface AddDangerModalProps {
   visible: boolean;
@@ -41,6 +42,7 @@ export default function AddDangerModal({
   onClose,
   onSave,
 }: AddDangerModalProps) {
+  const { theme } = useSettings();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<DangerCategory>('threat');
@@ -93,27 +95,31 @@ export default function AddDangerModal({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.overlay}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>⚠️ Oznacz Niebezpieczne Miejsce</Text>
-            <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>✕</Text>
+        <View style={[styles.modalContainer, { backgroundColor: theme.cardBg }]}>
+          <View style={[styles.header, { borderBottomColor: theme.border }]}>
+            <TouchableOpacity onPress={handleClose} style={styles.backButton}>
+              <Text style={[styles.backButtonText, { color: theme.text }]}>←</Text>
             </TouchableOpacity>
+            <Text style={[styles.headerTitle, { color: theme.text }]}>
+              ⚠️ Oznacz Niebezpieczne Miejsce
+            </Text>
           </View>
 
           <ScrollView style={styles.formContent} keyboardShouldPersistTaps="handled">
             {initialCoords && (
-              <View style={styles.coordsBox}>
-                <Text style={styles.coordsLabel}>📍 Lokalizacja znacznika:</Text>
-                <Text style={styles.coordsValue}>
+              <View style={[styles.coordsBox, { backgroundColor: theme.bg }]}>
+                <Text style={[styles.coordsLabel, { color: theme.textSecondary }]}>
+                  📍 Lokalizacja znacznika:
+                </Text>
+                <Text style={[styles.coordsValue, { color: theme.text }]}>
                   {initialCoords.latitude.toFixed(5)}, {initialCoords.longitude.toFixed(5)}
                 </Text>
               </View>
             )}
 
-            <Text style={styles.inputLabel}>Tytuł zgłoszenia *</Text>
+            <Text style={[styles.inputLabel, { color: theme.text }]}>Tytuł zgłoszenia *</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: theme.bg, color: theme.text }]}
               placeholder="np. Brak latarni, podejrzany pojazd"
               placeholderTextColor="#666"
               value={title}
@@ -121,13 +127,14 @@ export default function AddDangerModal({
               maxLength={60}
             />
 
-            <Text style={styles.inputLabel}>Kategoria zagrożenia</Text>
+            <Text style={[styles.inputLabel, { color: theme.text }]}>Kategoria zagrożenia</Text>
             <View style={styles.categoryGrid}>
               {CATEGORIES.map((cat) => (
                 <TouchableOpacity
                   key={cat.value}
                   style={[
                     styles.categoryChip,
+                    { backgroundColor: theme.bg, borderColor: theme.border },
                     category === cat.value && styles.categoryChipSelected,
                   ]}
                   onPress={() => setCategory(cat.value)}
@@ -136,6 +143,7 @@ export default function AddDangerModal({
                   <Text
                     style={[
                       styles.categoryText,
+                      { color: theme.textSecondary },
                       category === cat.value && styles.categoryTextSelected,
                     ]}
                   >
@@ -145,7 +153,7 @@ export default function AddDangerModal({
               ))}
             </View>
 
-            <Text style={styles.inputLabel}>Poziom niebezpieczeństwa</Text>
+            <Text style={[styles.inputLabel, { color: theme.text }]}>Poziom niebezpieczeństwa</Text>
             <View style={styles.severityRow}>
               {SEVERITIES.map((sev) => (
                 <TouchableOpacity
@@ -160,6 +168,7 @@ export default function AddDangerModal({
                   <Text
                     style={[
                       styles.severityText,
+                      { color: theme.textSecondary },
                       severity === sev.value && styles.severityTextSelected,
                     ]}
                   >
@@ -169,9 +178,9 @@ export default function AddDangerModal({
               ))}
             </View>
 
-            <Text style={styles.inputLabel}>Szczegółowy opis</Text>
+            <Text style={[styles.inputLabel, { color: theme.text }]}>Szczegółowy opis</Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
+              style={[styles.input, styles.textArea, { backgroundColor: theme.bg, color: theme.text }]}
               placeholder="Opisz zagrożenie, aby inni użytkownicy wiedzieli, na co uważać..."
               placeholderTextColor="#666"
               value={description}
@@ -180,9 +189,9 @@ export default function AddDangerModal({
               numberOfLines={3}
             />
 
-            <Text style={styles.inputLabel}>Zgłaszający</Text>
+            <Text style={[styles.inputLabel, { color: theme.text }]}>Zgłaszający</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: theme.bg, color: theme.text }]}
               placeholder="Twoja nazwa / pseudonim"
               placeholderTextColor="#666"
               value={reporterName}
@@ -191,10 +200,10 @@ export default function AddDangerModal({
           </ScrollView>
 
           <View style={styles.footer}>
-            <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
-              <Text style={styles.cancelBtnText}>Anuluj</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit}>
+            <TouchableOpacity
+              style={[styles.saveBtn, { backgroundColor: theme.primaryRed }]}
+              onPress={handleSubmit}
+            >
               <Text style={styles.saveBtnText}>Dodaj Punkt Na Mapie</Text>
             </TouchableOpacity>
           </View>
@@ -211,15 +220,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContainer: {
-    backgroundColor: '#1E1E1E',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '85%',
+    flex: 1,
     paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -231,12 +238,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  closeButton: {
-    padding: 6,
+  backButton: {
+    padding: 4,
+    marginRight: 8,
   },
-  closeButtonText: {
-    color: '#8E8E93',
-    fontSize: 20,
+  backButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   formContent: {
     paddingHorizontal: 20,
@@ -332,24 +340,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: {
-    flexDirection: 'row',
     paddingHorizontal: 20,
     paddingTop: 16,
-    gap: 12,
-  },
-  cancelBtn: {
-    flex: 1,
-    backgroundColor: '#2C2C2E',
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  cancelBtnText: {
-    color: '#AAA',
-    fontWeight: '600',
   },
   saveBtn: {
-    flex: 2,
     backgroundColor: '#FF3B30',
     paddingVertical: 14,
     borderRadius: 10,
