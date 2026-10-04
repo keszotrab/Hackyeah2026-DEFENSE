@@ -19,12 +19,7 @@ export default function FeatureGrid({
   onOpenChatbot,
   onCheckIn,
 }: FeatureGridProps) {
-  const { isEasyMode, isHighContrast, theme, showToast } = useSettings();
-
-  const handleCheckInPress = () => {
-    showToast("Zameldowano pomyślnie!", "success");
-    onCheckIn();
-  };
+  const { isEasyMode, isHighContrast, theme } = useSettings();
 
   // --- TRYB UŁATWIONY (Easy Mode - 2 duże przyciski) ---
   if (isEasyMode) {
@@ -53,7 +48,7 @@ export default function FeatureGrid({
             { backgroundColor: theme.cardBg, borderColor: theme.border },
             isHighContrast && styles.highContrastCard,
           ]}
-          onPress={handleCheckInPress}
+          onPress={onCheckIn}
           activeOpacity={0.8}
         >
           <View style={[styles.easyIconBox, { backgroundColor: "#DCFCE7" }]}>
@@ -127,7 +122,7 @@ export default function FeatureGrid({
           { backgroundColor: theme.cardBg, borderColor: theme.border },
           isHighContrast && styles.highContrastCard,
         ]}
-        onPress={handleCheckInPress}
+        onPress={onCheckIn}
         activeOpacity={0.8}
       >
         <View style={[styles.iconBox, { backgroundColor: "#DCFCE7" }]}>
