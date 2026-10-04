@@ -219,47 +219,35 @@ export default function HomeScreen() {
       <ScrollView
         style={[styles.scrollArea, { backgroundColor: theme.bg }]}
         contentContainerStyle={styles.scrollContent}
-        scrollEnabled={!isMapInteracting}
         nestedScrollEnabled={true}
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
         {/* DUŻY CENTRALNY PRZYCISK SOS / POMOC */}
         <View style={styles.sosSection}>
-          <TouchableOpacity
-            style={[
-              styles.sosMainBtn,
-              isEasyMode && styles.sosMainBtnEasy,
-              isHighContrast && styles.highContrastSOSBtn,
-            ]}
-            onPress={handleStartSOSProcess}
-            activeOpacity={0.85}
-          >
-            <Text style={[styles.sosIcon, isEasyMode && styles.sosIconEasy]}>🚨</Text>
-            <Text
-              style={[
-                styles.sosMainBtn,
-                isEasyMode && styles.sosMainBtnEasy,
-                isHighContrast && styles.highContrastSOSBtn,
-              ]}
-              onPress={handleStartSOSProcess}
-              activeOpacity={0.85}
-            >
-              <Text style={[styles.sosIcon, isEasyMode && styles.sosIconEasy]}>🆘</Text>
-              <Text
-                style={[
-                  styles.sosText,
-                  isEasyMode && styles.sosTextEasy,
-                  isHighContrast && styles.highContrastSOSText,
-                ]}
-              >
-                {isEasyMode ? 'POMOC' : 'POTRZEBUJĘ\nPOMOCY'}
-              </Text>
-            </TouchableOpacity>
+<TouchableOpacity
+  style={[
+    styles.sosMainBtn,
+    isEasyMode && styles.sosMainBtnEasy,
+    isHighContrast && styles.highContrastSOSBtn,
+  ]}
+  onPress={handleStartSOSProcess}
+  activeOpacity={0.85}
+>
+  <Text style={[styles.sosIcon, isEasyMode && styles.sosIconEasy]}>🆘</Text>
+  <Text
+    style={[
+      styles.sosText,
+      isEasyMode && styles.sosTextEasy,
+      isHighContrast && styles.highContrastSOSText,
+    ]}
+  >
+    {isEasyMode ? 'POMOC' : 'POTRZEBUJĘ\nPOMOCY'}
+  </Text>
+</TouchableOpacity>
             <Text style={[styles.sosSubtext, { color: theme.textSecondary }]}>
               Naciśnij w nagłej sytuacji
             </Text>
-          </View>
 
           <TouchableOpacity
             style={[styles.timerButton, { backgroundColor: theme.cardBg, borderColor: theme.border }]}
