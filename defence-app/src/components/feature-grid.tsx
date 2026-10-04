@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useSettings } from '../services/settings-context';
+import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useSettings } from "../services/settings-context";
 
 interface FeatureGridProps {
   onOpenAlerts: () => void;
@@ -22,7 +22,7 @@ export default function FeatureGrid({
   const { isEasyMode, isHighContrast, theme, showToast } = useSettings();
 
   const handleCheckInPress = () => {
-    showToast('Zameldowano pomyślnie!', 'success');
+    showToast("Zameldowano pomyślnie!", "success");
     onCheckIn();
   };
 
@@ -39,10 +39,12 @@ export default function FeatureGrid({
           onPress={onOpenChatbot}
           activeOpacity={0.8}
         >
-          <View style={[styles.easyIconBox, { backgroundColor: '#F3E8FF' }]}>
+          <View style={[styles.easyIconBox, { backgroundColor: "#F3E8FF" }]}>
             <Text style={styles.easyIcon}>🤖</Text>
           </View>
-          <Text style={[styles.easyCardLabel, { color: theme.text }]}>Chatbot</Text>
+          <Text style={[styles.easyCardLabel, { color: theme.text }]}>
+            Chatbot
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -54,10 +56,12 @@ export default function FeatureGrid({
           onPress={handleCheckInPress}
           activeOpacity={0.8}
         >
-          <View style={[styles.easyIconBox, { backgroundColor: '#DCFCE7' }]}>
+          <View style={[styles.easyIconBox, { backgroundColor: "#DCFCE7" }]}>
             <Text style={styles.easyIcon}>📍</Text>
           </View>
-          <Text style={[styles.easyCardLabel, { color: theme.text }]}>Check in</Text>
+          <Text style={[styles.easyCardLabel, { color: theme.text }]}>
+            Check in
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -66,22 +70,6 @@ export default function FeatureGrid({
   // --- TRYB PEŁNY (Standard Mode - 6 kafelków) ---
   return (
     <View style={styles.grid}>
-      {/* Alerty */}
-      <TouchableOpacity
-        style={[
-          styles.card,
-          { backgroundColor: theme.cardBg, borderColor: theme.border },
-          isHighContrast && styles.highContrastCard,
-        ]}
-        onPress={onOpenAlerts}
-        activeOpacity={0.8}
-      >
-        <View style={[styles.iconBox, { backgroundColor: '#FEE2E2' }]}>
-          <Text style={styles.icon}>⚠️</Text>
-        </View>
-        <Text style={[styles.cardLabel, { color: theme.text }]}>Alerty</Text>
-      </TouchableOpacity>
-
       {/* Moje grupy */}
       <TouchableOpacity
         style={[
@@ -92,26 +80,12 @@ export default function FeatureGrid({
         onPress={onOpenGroups}
         activeOpacity={0.8}
       >
-        <View style={[styles.iconBox, { backgroundColor: '#DBEAFE' }]}>
+        <View style={[styles.iconBox, { backgroundColor: "#DBEAFE" }]}>
           <Text style={styles.icon}>👥</Text>
         </View>
-        <Text style={[styles.cardLabel, { color: theme.text }]}>Moje grupy</Text>
-      </TouchableOpacity>
-
-      {/* Mapa */}
-      <TouchableOpacity
-        style={[
-          styles.card,
-          { backgroundColor: theme.cardBg, borderColor: theme.border },
-          isHighContrast && styles.highContrastCard,
-        ]}
-        onPress={onToggleMap}
-        activeOpacity={0.8}
-      >
-        <View style={[styles.iconBox, { backgroundColor: '#D1FAE5' }]}>
-          <Text style={styles.icon}>🗺️</Text>
-        </View>
-        <Text style={[styles.cardLabel, { color: theme.text }]}>Mapa</Text>
+        <Text style={[styles.cardLabel, { color: theme.text }]}>
+          Moje grupy
+        </Text>
       </TouchableOpacity>
 
       {/* Kontakt */}
@@ -124,7 +98,7 @@ export default function FeatureGrid({
         onPress={onOpenContacts}
         activeOpacity={0.8}
       >
-        <View style={[styles.iconBox, { backgroundColor: '#FFEDD5' }]}>
+        <View style={[styles.iconBox, { backgroundColor: "#FFEDD5" }]}>
           <Text style={styles.icon}>📞</Text>
         </View>
         <Text style={[styles.cardLabel, { color: theme.text }]}>Kontakt</Text>
@@ -140,7 +114,7 @@ export default function FeatureGrid({
         onPress={onOpenChatbot}
         activeOpacity={0.8}
       >
-        <View style={[styles.iconBox, { backgroundColor: '#F3E8FF' }]}>
+        <View style={[styles.iconBox, { backgroundColor: "#F3E8FF" }]}>
           <Text style={styles.icon}>🤖</Text>
         </View>
         <Text style={[styles.cardLabel, { color: theme.text }]}>Chatbot</Text>
@@ -156,7 +130,7 @@ export default function FeatureGrid({
         onPress={handleCheckInPress}
         activeOpacity={0.8}
       >
-        <View style={[styles.iconBox, { backgroundColor: '#DCFCE7' }]}>
+        <View style={[styles.iconBox, { backgroundColor: "#DCFCE7" }]}>
           <Text style={styles.icon}>📍</Text>
         </View>
         <Text style={[styles.cardLabel, { color: theme.text }]}>Check in</Text>
@@ -167,37 +141,37 @@ export default function FeatureGrid({
 
 const styles = StyleSheet.create({
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: 12,
     paddingVertical: 10,
     gap: 10,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   card: {
-    width: '31%',
+    width: "48%",
     paddingVertical: 14,
     paddingHorizontal: 8,
     borderRadius: 18,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
   highContrastCard: {
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
     borderWidth: 2,
-    borderColor: '#FFFF00',
+    borderColor: "#FFFF00",
   },
   iconBox: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 6,
   },
   icon: {
@@ -205,12 +179,12 @@ const styles = StyleSheet.create({
   },
   cardLabel: {
     fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
   // Easy mode styling
   easyGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,
@@ -219,8 +193,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 22,
     borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     elevation: 4,
   },
@@ -228,8 +202,8 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 10,
   },
   easyIcon: {
@@ -237,6 +211,6 @@ const styles = StyleSheet.create({
   },
   easyCardLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
