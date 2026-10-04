@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   TouchableOpacity,
   StatusBar,
   ScrollView,
 } from 'react-native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import OSMWebView from '../components/map/OSMWebView';
+import AddDangerModal from '../components/add-danger-modal';
 import SOSAlertBanner from '../components/sos-alert-banner';
 import SettingsModal from '../components/settings-modal';
 import SOSCountdownModal from '../components/sos-countdown-modal';
@@ -27,6 +30,9 @@ export default function HomeScreen() {
   const { isDarkMode, isHighContrast, isEasyMode, theme, showToast } = useSettings();
 
   const [sosAlerts, setSosAlerts] = useState<SOSAlert[]>([]);
+  const [isStatusBarVisible, setIsStatusBarVisible] = useState(false);
+  const previousScrollOffset = useRef(0);
+  const accumulatedScrollDelta = useRef(0);
 
   // Modale i widoczność
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
@@ -124,15 +130,39 @@ export default function HomeScreen() {
     </View>
   );
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetY = Math.max(0, event.nativeEvent.contentOffset.y);
+    const scrollDelta = offsetY - previousScrollOffset.current;
+
+    accumulatedScrollDelta.current += scrollDelta;
+
+    if (offsetY > 0 && accumulatedScrollDelta.current <= -24) {
+      setIsStatusBarVisible(true);
+      accumulatedScrollDelta.current = 0;
+    } else if (accumulatedScrollDelta.current >= 24) {
+      setIsStatusBarVisible(false);
+      accumulatedScrollDelta.current = 0;
+    }
+
+    previousScrollOffset.current = offsetY;
+  };
+
   return (
     <SafeAreaView
+      edges={['left', 'right', 'bottom']}
       style={[
         styles.container,
         { backgroundColor: theme.bg },
         isHighContrast && styles.highContrastContainer,
       ]}
     >
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar
+        barStyle={isDarkMode || isHighContrast ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.headerBg}
+        hidden={!isStatusBarVisible}
+        translucent={false}
+        animated
+      />
 
       {/* HEADER */}
       <View
@@ -186,12 +216,27 @@ export default function HomeScreen() {
         }}
       />
 
-      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.mainContent}>
-          {renderAlertModeSelector()}
-
-          <View style={styles.sosSection}>
-            <TouchableOpacity
+      <ScrollView
+        style={[styles.scrollArea, { backgroundColor: theme.bg }]}
+        contentContainerStyle={styles.scrollContent}
+        scrollEnabled={!isMapInteracting}
+        nestedScrollEnabled={true}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
+        {/* DUŻY CENTRALNY PRZYCISK SOS / POMOC */}
+        <View style={styles.sosSection}>
+          <TouchableOpacity
+            style={[
+              styles.sosMainBtn,
+              isEasyMode && styles.sosMainBtnEasy,
+              isHighContrast && styles.highContrastSOSBtn,
+            ]}
+            onPress={handleStartSOSProcess}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.sosIcon, isEasyMode && styles.sosIconEasy]}>🚨</Text>
+            <Text
               style={[
                 styles.sosMainBtn,
                 isEasyMode && styles.sosMainBtnEasy,
