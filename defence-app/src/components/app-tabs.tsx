@@ -22,6 +22,19 @@ export default function AppTabs() {
       <Tabs.Screen
         name="index"
         options={{
+          title: 'S.O.S.',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'exclamationmark.triangle', android: 'warning', web: 'warning' }}
+              tintColor={color}
+              size={22}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="map"
+        options={{
           title: 'Mapa',
           tabBarIcon: ({ color }) => (
             <SymbolView
@@ -33,16 +46,22 @@ export default function AppTabs() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="groups"
         options={{
-          title: 'Explore',
+          title: 'Grupy',
           tabBarIcon: ({ color }) => (
             <SymbolView
-              name={{ ios: 'safari', android: 'explore', web: 'link' }}
+              name={{ ios: 'person.3', android: 'groups', web: 'group' }}
               tintColor={color}
               size={22}
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
