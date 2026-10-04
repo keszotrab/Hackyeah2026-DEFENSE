@@ -20,6 +20,7 @@ import ChatbotModal from '../components/chatbot-modal';
 import ContactsModal from '../components/contacts-modal';
 import FeatureGrid from '../components/feature-grid';
 import SafeTimerModal from '../components/safe-timer-modal';
+import CheckInModal from '../components/check-in-modal';
 
 import { useLocation } from '../hooks/use-location';
 import { useSettings } from '../services/settings-context';
@@ -41,6 +42,7 @@ export default function HomeScreen() {
   const [isChatbotVisible, setIsChatbotVisible] = useState(false);
   const [isContactsVisible, setIsContactsVisible] = useState(false);
   const [isSafeTimerVisible, setIsSafeTimerVisible] = useState(false);
+  const [isCheckInVisible, setIsCheckInVisible] = useState(false);
 
   // Tryby alarmowania
   const [alertMode, setAlertMode] = useState<'rodzina' | 'spolecznosc' | 'poblizu'>('rodzina');
@@ -268,7 +270,7 @@ export default function HomeScreen() {
             onToggleMap={() => showToast('Przejdź do zakładki Mapa', 'info')}
             onOpenContacts={() => setIsContactsVisible(true)}
             onOpenChatbot={() => setIsChatbotVisible(true)}
-            onCheckIn={() => showToast('Zrobiono Check-in z grupą!', 'success')}
+            onCheckIn={() => setIsCheckInVisible(true)}
           />
         </View>
       </ScrollView>
@@ -279,6 +281,11 @@ export default function HomeScreen() {
       <ChatbotModal visible={isChatbotVisible} onClose={() => setIsChatbotVisible(false)} />
       <ContactsModal visible={isContactsVisible} onClose={() => setIsContactsVisible(false)} />
       <SafeTimerModal visible={isSafeTimerVisible} onClose={() => setIsSafeTimerVisible(false)} onTimerExpired={handleCompleteSOSCountdown} />
+      <CheckInModal
+        visible={isCheckInVisible}
+        location={location}
+        onClose={() => setIsCheckInVisible(false)}
+      />
 
     </SafeAreaView>
   );
