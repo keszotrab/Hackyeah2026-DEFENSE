@@ -13,8 +13,8 @@ export default function SOSAlertBanner({
   onResolveSOS,
   onFlyToSOS,
 }: SOSAlertBannerProps) {
-  if (!activeSOSList || activeSOSList.length === 0) {
-    return null;
+  if (1 == 1 || !activeSOSList || activeSOSList.length === 0) {
+    return null; // fix later
   }
 
   // Wyświetl najnowszy aktywny alarm SOS
